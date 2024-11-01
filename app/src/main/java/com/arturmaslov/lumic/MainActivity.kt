@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.arturmaslov.lumic.ui.compose.MainScreen
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.ActivityHelper
+import com.arturmaslov.lumic.utils.CameraUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,12 +30,14 @@ class MainActivity : ComponentActivity(), ActivityHelper {
 
     private lateinit var cameraManager: CameraManager
     private lateinit var cameraId: String
-    private var timesFlashed = MutableStateFlow(0)
-    private var cameraPermissionStatus = MutableStateFlow(PermissionStatus.DENIED)
+    private var hasFlash = false
+
+    private val cameraPermissionStatus = MutableStateFlow(PermissionStatus.DENIED)
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.entries.forEach {
-                cameraPermissionStatus.value = if (it.key == Manifest.permission.CAMERA && it.value) {
+            val permissionKeys = permissions.keys.map { it }
+            permissions.entries.forEachIndexed { index, entry ->
+                cameraPermissionStatus.value = if (entry.key == permissionKeys[index] && entry.value) {
                     // Permission granted, proceed with flashlight operations
                     PermissionStatus.GRANTED
                 } else {
@@ -43,53 +46,14 @@ class MainActivity : ComponentActivity(), ActivityHelper {
                 }
             }
         }
+    private lateinit var cameraUtils: CameraUtils
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requestPermissions()
+        requestPermissions(arrayOf(Manifest.permission.CAMERA))
         setObservers()
-
-        setContent {
-            val cameraPermissionStatus = cameraPermissionStatus().collectAsState().value
-            val timesFlashed = timesFlashed().collectAsState().value
-            val hasFlash = hasFlash(this)
-
-            LumicTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    content = { innerPadding ->
-                        MainScreen(
-                            modifier = Modifier.padding(innerPadding),
-                            cameraPermissionStatus = cameraPermissionStatus,
-                            hasFlash = hasFlash,
-                            timesFlashed = timesFlashed,
-                        )
-                    }
-                )
-            }
-        }
-    }
-
-    private fun hasFlash(context: Context): Boolean {
-        cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        cameraId = cameraManager.cameraIdList[0] // Get the first camera ID
-        val hasFlash = cameraManager.getCameraCharacteristics(cameraId)
-            .get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
-        return hasFlash
-    }
-
-    private fun flashLight(flashCount: Int) {
-        lifecycleScope.launch {
-            repeat(flashCount) {
-                cameraManager.setTorchMode(cameraId, true) // Turn on
-                delay(500)
-                cameraManager.setTorchMode(cameraId, false) // Turn off
-                delay(500)
-                timesFlashed.value++
-            }
-        }
     }
 
     override fun setListeners() {}
@@ -98,20 +62,43 @@ class MainActivity : ComponentActivity(), ActivityHelper {
         // observe permission change
         lifecycleScope.launch {
             cameraPermissionStatus.collect {
-                if (it == PermissionStatus.GRANTED && hasFlash(baseContext)) {
-                    flashLight(3)
+                if (it == PermissionStatus.GRANTED) {
+                    cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+                    cameraId = cameraManager.cameraIdList[0] // Get the first camera ID
+                    cameraUtils = CameraUtils(cameraManager, cameraId)
+                    hasFlash = cameraUtils.hasFlash(baseContext)
+                    if (hasFlash) {
+                        cameraUtils.flashLight(3)
+                    }
+
+                    setContent {
+                        val cameraPermissionStatus = cameraPermissionStatus().collectAsState().value
+                        val timesFlashed = cameraUtils.timesFlashed().collectAsState().value
+
+                        LumicTheme {
+                            Scaffold(
+                                modifier = Modifier.fillMaxSize(),
+                                content = { innerPadding ->
+                                    MainScreen(
+                                        modifier = Modifier.padding(innerPadding),
+                                        cameraPermissionStatus = cameraPermissionStatus,
+                                        hasFlash = hasFlash,
+                                        timesFlashed = timesFlashed,
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-    override fun requestPermissions() {
-        // check camera permission
-        requestPermissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
+    override fun requestPermissions(permissionArray: Array<String>) {
+        requestPermissionLauncher.launch(permissionArray)
     }
 
     private fun cameraPermissionStatus() = cameraPermissionStatus as StateFlow<PermissionStatus>
-    private fun timesFlashed() = timesFlashed as StateFlow<Int>
 
     enum class PermissionStatus {
         GRANTED,
