@@ -1,7 +1,6 @@
 # Lumic
 > Convert your phone into party light device
 
-![Version](https://img.shields.io/github/package-json/v/neone35/lumic)
 ![Repo Size](https://img.shields.io/github/repo-size/neone35/lumic)
 ![Contributors](https://img.shields.io/github/contributors/neone35/lumic)
 ![Forks](https://img.shields.io/github/forks/neone35/lumic?style=social)
@@ -12,7 +11,7 @@
 Switch between internal microphone/system sounds and visualize those sounds with device screen and/or flashlight. It's also possible to modify screen color/brightness, manual flash (strobe), detection sensitivity to suit your needs. Different setups can be saved as templates with unique names.
 
 ### Built With
-* [React Native](https://reactnative.dev/)
+* [Android Studio](https://developer.android.com/studio)
 
 ### Screenshots
 - _To be added_
