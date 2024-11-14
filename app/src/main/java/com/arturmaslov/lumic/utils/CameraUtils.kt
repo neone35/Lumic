@@ -17,11 +17,11 @@ class CameraUtils(private val context: Context) {
     private var cameraId: String = cameraManager.cameraIdList[0]
 
     private var timesFlashed = MutableStateFlow(0)
+    private var hasFlash = MutableStateFlow(false)
 
-    fun hasFlash(): Boolean {
-        val hasFlash = cameraManager.getCameraCharacteristics(cameraId)
+    fun checkIfHasFlash() {
+        hasFlash.value = cameraManager.getCameraCharacteristics(cameraId)
             .get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
-        return hasFlash
     }
 
     fun flashLight(volumeData: List<Int>) {
@@ -42,4 +42,5 @@ class CameraUtils(private val context: Context) {
     }
 
     fun timesFlashed() = timesFlashed as StateFlow<Int>
+    fun hasFlash() = hasFlash as StateFlow<Boolean>
 }

@@ -9,16 +9,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.arturmaslov.lumic.MainActivity
 import com.arturmaslov.lumic.ui.theme.LumicTheme
+import com.arturmaslov.lumic.utils.PermissionStatus
 
 @Composable
 @Preview(showBackground = true)
 fun PreviewMainScreen() {
     LumicTheme {
         MainScreen(
-            cameraPermissionStatus = MainActivity.PermissionStatus.GRANTED,
-            audioRecordPermissionStatus = MainActivity.PermissionStatus.GRANTED,
+            cameraAllowed = true,
+            audioRecordAllowed = true,
             hasFlash = true,
-            timesFlashed = 0
+            timesFlashed = 0,
+            navToPermissionScreen = {}
         )
     }
 }
@@ -27,27 +29,18 @@ fun PreviewMainScreen() {
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier.fillMaxSize(),
-    cameraPermissionStatus: MainActivity.PermissionStatus,
-    audioRecordPermissionStatus: MainActivity.PermissionStatus,
+    cameraAllowed: Boolean,
+    audioRecordAllowed: Boolean,
     hasFlash: Boolean,
-    timesFlashed: Int
+    timesFlashed: Int,
+    navToPermissionScreen: () -> Unit,
 ) {
-    val cameraAllowed = cameraPermissionStatus == MainActivity.PermissionStatus.GRANTED
-    val audioRecordAllowed = audioRecordPermissionStatus == MainActivity.PermissionStatus.GRANTED
-
-    if (cameraAllowed && audioRecordAllowed && hasFlash) {
+    if (cameraAllowed && audioRecordAllowed) {
         Text(text = "Times Flashed: $timesFlashed")
-    } else {
-        if (!cameraAllowed && !audioRecordAllowed) {
-            Text(text = "Camera and audio permission denied")
-        } else if (!cameraAllowed) {
-            Text(text = "Camera permission denied")
-        } else if (!audioRecordAllowed) {
-            Text(text = "Audio permission denied")
-        }
-
         if (!hasFlash) {
             Text(text = "Camera has no flashlight")
         }
+    } else {
+        navToPermissionScreen()
     }
 }
