@@ -3,10 +3,8 @@ package com.arturmaslov.lumic
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -31,43 +29,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity(), ActivityHelper {
+class MainActivity : BaseActivity(), ActivityHelper {
 
-    private val _cameraPermissionStatus = MutableStateFlow(PermissionStatus.DENIED)
-    private val _audioRecordPermissionStatus = MutableStateFlow(PermissionStatus.DENIED)
-    private val loadStatus = MutableStateFlow(LoadStatus.LOADING)
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-//            val permissionKeys = permissions.keys.map { it }
-            permissions.entries.forEachIndexed { index, entry ->
-                when (entry.key) {
-                    Manifest.permission.CAMERA -> {
-                        _cameraPermissionStatus.value =
-                            if (entry.value) {
-                                PermissionStatus.GRANTED
-                            } else {
-                                PermissionStatus.DENIED
-                            }
-                    }
-
-                    Manifest.permission.RECORD_AUDIO -> {
-                        _audioRecordPermissionStatus.value =
-                            if (entry.value) {
-                                PermissionStatus.GRANTED
-                            } else {
-                                PermissionStatus.DENIED
-                            }
-                    }
-                }
-            }
-        }
     private lateinit var cameraUtils: CameraUtils
     private lateinit var audioUtils: AudioUtils
 
@@ -75,9 +42,9 @@ class MainActivity : ComponentActivity(), ActivityHelper {
 
     fun checkPermissions() {
         mapOf(
-            Manifest.permission.CAMERA to _cameraPermissionStatus,
-            Manifest.permission.RECORD_AUDIO to _audioRecordPermissionStatus
-        ).forEach { (permission, status) ->
+            baseCameraPermissionStatus to Manifest.permission.CAMERA,
+            baseAudioRecordPermissionStatus to Manifest.permission.RECORD_AUDIO
+        ).forEach { (status, permission) ->
             if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
                 status.value = PermissionStatus.GRANTED
             }
@@ -151,7 +118,7 @@ class MainActivity : ComponentActivity(), ActivityHelper {
     override fun setObservers() {
         lifecycleScope.launch {
             // Combine both flows
-            combine(_cameraPermissionStatus, _audioRecordPermissionStatus)
+            combine(baseCameraPermissionStatus, baseAudioRecordPermissionStatus)
             { cameraPermission, audioPermission ->
                 cameraPermission == PermissionStatus.GRANTED
                         && audioPermission == PermissionStatus.GRANTED
@@ -177,7 +144,7 @@ class MainActivity : ComponentActivity(), ActivityHelper {
     }
 
     override fun requestPermissions(permissionArray: Array<String>) {
-        requestPermissionLauncher.launch(permissionArray)
+        baseRequestPermissionLauncher.launch(permissionArray)
     }
 
     override fun onDestroy() {
@@ -185,11 +152,6 @@ class MainActivity : ComponentActivity(), ActivityHelper {
         recordFlashJob?.cancel()
         audioUtils.stopRecording()
     }
-
-    private fun cameraPermissionStatus() = _cameraPermissionStatus as StateFlow<PermissionStatus>
-    private fun audioRecordPermissionStatus() =
-        _audioRecordPermissionStatus as StateFlow<PermissionStatus>
-    fun loadStatus() = loadStatus
 
     companion object {
         const val MAIN_SCREEN = "main_screen"
