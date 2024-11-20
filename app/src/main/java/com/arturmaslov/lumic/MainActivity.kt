@@ -96,9 +96,10 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                     PermissionAskScreen(
                                         cameraPermissionStatus = cameraPermissionStatus,
                                         audioRecordPermissionStatus = audioRecordPermissionStatus,
-                                        hasFlash = hasFlash,
                                         onRequestPermissions = {
-                                            requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))
+                                            requestPermissions(arrayOf(
+                                                Manifest.permission.CAMERA,
+                                                Manifest.permission.RECORD_AUDIO))
                                         },
                                         navToMainScreen = {
                                             navController.navigate(MAIN_SCREEN)

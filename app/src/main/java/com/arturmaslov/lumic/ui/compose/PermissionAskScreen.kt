@@ -24,8 +24,7 @@ fun PreviewPermissionAskScreen() {
             cameraPermissionStatus = PermissionStatus.DENIED,
             audioRecordPermissionStatus = PermissionStatus.DENIED,
             onRequestPermissions = { },
-            navToMainScreen = { },
-            hasFlash = true
+            navToMainScreen = { }
         )
     }
 }
@@ -35,8 +34,7 @@ fun PermissionAskScreen(
     cameraPermissionStatus: PermissionStatus,
     audioRecordPermissionStatus: PermissionStatus,
     onRequestPermissions: () -> Unit,
-    navToMainScreen: () -> Unit,
-    hasFlash: Boolean
+    navToMainScreen: () -> Unit
 ) {
     val cameraAllowed = cameraPermissionStatus == PermissionStatus.GRANTED
     val audioRecordAllowed = audioRecordPermissionStatus == PermissionStatus.GRANTED

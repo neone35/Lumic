@@ -33,10 +33,9 @@ class CameraUtils(private val context: Context) {
 
             if (dataNotEmpty && highAmplitude) {
                 cameraManager.setTorchMode(cameraId, true) // Turn on
+                timesFlashed.value++
                 delay(Constants.FLASH_ON_DURATION_MS)
                 cameraManager.setTorchMode(cameraId, false) // Turn off
-                delay(Constants.FLASH_ON_DURATION_MS)
-                timesFlashed.value++
             }
         }
     }
