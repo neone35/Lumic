@@ -1,30 +1,40 @@
 package com.arturmaslov.lumic.ui.compose
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arturmaslov.lumic.MainActivity
+import androidx.compose.ui.window.Dialog
 import com.arturmaslov.lumic.ui.theme.LumicTheme
+import com.arturmaslov.lumic.utils.Constants
 import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_MS
-import com.arturmaslov.lumic.utils.PermissionStatus
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import com.arturmaslov.lumic.R
+import com.github.skydoves.colorpicker.compose.ColorEnvelope
+import com.github.skydoves.colorpicker.compose.ColorPickerController
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
 
 @Composable
 @Preview(showBackground = true)
@@ -35,7 +45,7 @@ fun PreviewMainScreen() {
             audioRecordAllowed = true,
             hasFlash = true,
             timesFlashed = 0,
-            navToPermissionScreen = {}
+            isColorPickerDialogVisible = false
         )
     }
 }
@@ -48,14 +58,18 @@ fun MainScreen(
     audioRecordAllowed: Boolean,
     hasFlash: Boolean,
     timesFlashed: Int,
-    navToPermissionScreen: () -> Unit,
+    isColorPickerDialogVisible: Boolean,
+    navToPermissionScreen: () -> Unit = {},
+    onColorPickerOpen: () -> Unit = {},
+    onColorPickerDismiss: () -> Unit = {}
 ) {
-    val bgColor = remember { mutableStateOf(Color.Black) }
+    val bgColor = remember { mutableStateOf(Color.DarkGray) }
     LaunchedEffect(timesFlashed) { // Restart the effect when the timesFlashed changes
+        val tempColor = bgColor.value
         if (timesFlashed > 0) {
-            bgColor.value = Color.Red
-            delay(FLASH_ON_DURATION_MS)
             bgColor.value = Color.Black
+            delay(FLASH_ON_DURATION_MS)
+            bgColor.value = tempColor
         }
     }
 
@@ -71,8 +85,31 @@ fun MainScreen(
             if (!hasFlash) {
                 Text(text = "Camera has no flashlight")
             }
+            ColorPickerButton { onColorPickerOpen() }
+        }
+        if (isColorPickerDialogVisible) {
+            ColorPickerDialog(
+                bgColor = bgColor,
+                onColorPickerDismiss = onColorPickerDismiss
+            )
         }
     } else {
         navToPermissionScreen()
+    }
+}
+
+@Composable
+fun ColorPickerButton(
+    onColorPickerOpen: () -> Unit
+) {
+    IconButton(
+        onClick = onColorPickerOpen
+    ) {
+        Icon(
+            ImageVector.vectorResource(R.drawable.ic_palette),
+            contentDescription = Constants.EMPTY_STRING,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(48.dp),
+        )
     }
 }

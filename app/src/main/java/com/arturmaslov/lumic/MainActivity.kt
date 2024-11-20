@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -69,6 +73,8 @@ class MainActivity : BaseActivity(), ActivityHelper {
             val hasFlash = cameraUtils.hasFlash().collectAsState().value
             val loadStatusState = loadStatus().collectAsState().value
 
+            var isColorPickerDialogVisible by remember { mutableStateOf(false) }
+
             LumicTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -87,8 +93,15 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         audioRecordAllowed = audioRecordPermissionStatus.bool,
                                         hasFlash = hasFlash,
                                         timesFlashed = timesFlashed,
+                                        isColorPickerDialogVisible = isColorPickerDialogVisible,
                                         navToPermissionScreen = {
                                             navController.navigate(PERMISSION_SCREEN)
+                                        },
+                                        onColorPickerOpen = {
+                                            isColorPickerDialogVisible = true
+                                        },
+                                        onColorPickerDismiss = {
+                                            isColorPickerDialogVisible = false
                                         }
                                     )
                                 }
