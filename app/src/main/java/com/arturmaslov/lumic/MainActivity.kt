@@ -48,8 +48,8 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : BaseActivity(), ActivityHelper {
 
-    private lateinit var cameraUtils: CameraUtils
-    private lateinit var audioUtils: AudioUtils
+    val cameraUtils by inject<CameraUtils>()
+    val audioUtils by inject<AudioUtils>()
 
     private var recordFlashJob: Job? = null
 
@@ -68,8 +68,6 @@ class MainActivity : BaseActivity(), ActivityHelper {
         super.onCreate(savedInstanceState)
 
         checkPermissions()
-        cameraUtils = CameraUtils(this@MainActivity, sensitivitySettingsCache)
-        audioUtils = AudioUtils(this@MainActivity)
         setObservers()
 
         setContent {

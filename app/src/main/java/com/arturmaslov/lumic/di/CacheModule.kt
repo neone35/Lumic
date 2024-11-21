@@ -5,6 +5,7 @@ import com.arturmaslov.lumic.cache.ColorSettingCache
 import com.arturmaslov.lumic.cache.ColorSettingCacheImpl
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
+import com.arturmaslov.lumic.utils.CameraUtils
 import com.arturmaslov.lumic.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
