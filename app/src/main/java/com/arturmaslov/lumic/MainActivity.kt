@@ -12,10 +12,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
@@ -30,6 +33,7 @@ import com.arturmaslov.lumic.utils.ActivityHelper
 import com.arturmaslov.lumic.utils.AudioUtils
 import com.arturmaslov.lumic.utils.CameraUtils
 import com.arturmaslov.lumic.utils.Constants
+import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
@@ -79,6 +83,11 @@ class MainActivity : BaseActivity(), ActivityHelper {
             val loadStatusState = loadStatus().collectAsState().value
 
             var isColorPickerDialogVisible by remember { mutableStateOf(false) }
+            var colorSetting by remember { mutableStateOf(Color(COLOR_INITIAL)) }
+            LaunchedEffect(key1 = true) {
+                val currentColor = colorSettingsCache.get() ?: COLOR_INITIAL
+                colorSetting = Color(currentColor)
+            }
             var isSettingsDialogVisible by remember { mutableStateOf(false) }
             var sensitivityThreshold by remember { mutableFloatStateOf(SENSITIVITY_THRESHOLD_INITIAL) }
             LaunchedEffect(key1 = true) {
@@ -109,6 +118,13 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         isColorPickerDialogVisible = isColorPickerDialogVisible,
                                         onColorPickerOpen = { isColorPickerDialogVisible = true },
                                         onColorPickerDismiss = { isColorPickerDialogVisible = false },
+                                        onColorSelected = { color ->
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                colorSettingsCache.set(color.value.toLong())
+                                                colorSetting = Color(color.value.toLong())
+                                            }
+                                        },
+                                        currentColorSetting = colorSetting.toArgb().toLong(),
                                         isSettingsDialogVisible = isSettingsDialogVisible,
                                         onSettingsOpen = { isSettingsDialogVisible = true },
                                         onSettingsDismiss = { isSettingsDialogVisible = false },

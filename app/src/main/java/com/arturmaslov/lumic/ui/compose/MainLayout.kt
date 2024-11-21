@@ -34,6 +34,7 @@ import com.arturmaslov.lumic.utils.Constants
 import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_MS
 import kotlinx.coroutines.delay
 import com.arturmaslov.lumic.R
+import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
@@ -52,6 +53,8 @@ fun PreviewMainScreen() {
             isSettingsDialogVisible = false,
             onColorPickerOpen = { },
             onColorPickerDismiss = { },
+            onColorSelected = { },
+            currentColorSetting = COLOR_INITIAL,
             onSettingsOpen = { },
             onSettingsDismiss = { },
             onMicrophoneSliderValueSelected = { },
@@ -72,13 +75,15 @@ fun MainScreen(
     navToPermissionScreen: () -> Unit = {},
     onColorPickerOpen: () -> Unit = {},
     onColorPickerDismiss: () -> Unit = {},
+    onColorSelected: (Color) -> Unit = {},
+    currentColorSetting: Long,
     isSettingsDialogVisible: Boolean,
     onSettingsOpen: () -> Unit = {},
     onSettingsDismiss: () -> Unit = {},
     onMicrophoneSliderValueSelected: (Float) -> Unit,
     currentSensitivityThreshold: Float
 ) {
-    val bgColor = remember { mutableStateOf(Color.DarkGray) }
+    val bgColor = remember { mutableStateOf(Color(currentColorSetting)) }
     LaunchedEffect(timesFlashed) { // Restart the effect when the timesFlashed changes
         val tempColor = bgColor.value
         if (timesFlashed > 0) {
@@ -106,7 +111,8 @@ fun MainScreen(
         if (isColorPickerDialogVisible) {
             ColorPickerDialog(
                 bgColor = bgColor,
-                onColorPickerDismiss = onColorPickerDismiss
+                onColorPickerDismiss = onColorPickerDismiss,
+                onColorSelected = onColorSelected
             )
         }
         if (isSettingsDialogVisible) {

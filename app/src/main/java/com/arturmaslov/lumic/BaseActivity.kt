@@ -3,6 +3,7 @@ package com.arturmaslov.lumic
 import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import com.arturmaslov.lumic.cache.ColorSettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
 import com.arturmaslov.lumic.utils.ActivityHelper
@@ -45,6 +46,7 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
         }
 
     val sensitivitySettingsCache by inject<SensitivitySettingCache>()
+    val colorSettingsCache by inject<ColorSettingCache>()
 
     override fun setListeners() {}
     override fun setObservers() {}

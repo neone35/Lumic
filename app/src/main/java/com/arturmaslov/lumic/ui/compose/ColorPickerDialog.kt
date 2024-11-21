@@ -35,7 +35,8 @@ fun PreviewColorPickerDialog() {
 @Composable
 fun ColorPickerDialog(
     bgColor: MutableState<Color>,
-    onColorPickerDismiss: () -> Unit = {}
+    onColorPickerDismiss: () -> Unit = {},
+    onColorSelected: (Color) -> Unit = {}
 ) {
     Dialog(
         onDismissRequest = {
@@ -60,6 +61,7 @@ fun ColorPickerDialog(
                 initialColor = bgColor.value,
                 onColorChanged = { colorEnvelope: ColorEnvelope ->
                     bgColor.value = colorEnvelope.color
+                    onColorSelected(colorEnvelope.color)
                 }
             )
 
