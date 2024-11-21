@@ -8,8 +8,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
 import com.arturmaslov.lumic.ui.compose.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
@@ -27,6 +30,7 @@ import com.arturmaslov.lumic.utils.ActivityHelper
 import com.arturmaslov.lumic.utils.AudioUtils
 import com.arturmaslov.lumic.utils.CameraUtils
 import com.arturmaslov.lumic.utils.Constants
+import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +40,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class MainActivity : BaseActivity(), ActivityHelper {
 
@@ -59,7 +64,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
         super.onCreate(savedInstanceState)
 
         checkPermissions()
-        cameraUtils = CameraUtils(this@MainActivity)
+        cameraUtils = CameraUtils(this@MainActivity, sensitivitySettingsCache)
         audioUtils = AudioUtils(this@MainActivity)
         setObservers()
 
@@ -74,6 +79,11 @@ class MainActivity : BaseActivity(), ActivityHelper {
             val loadStatusState = loadStatus().collectAsState().value
 
             var isColorPickerDialogVisible by remember { mutableStateOf(false) }
+            var isSettingsDialogVisible by remember { mutableStateOf(false) }
+            var sensitivityThreshold by remember { mutableFloatStateOf(SENSITIVITY_THRESHOLD_INITIAL) }
+            LaunchedEffect(key1 = true) {
+                sensitivityThreshold = sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
+            }
 
             LumicTheme {
                 Scaffold(
@@ -93,22 +103,28 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         audioRecordAllowed = audioRecordPermissionStatus.bool,
                                         hasFlash = hasFlash,
                                         timesFlashed = timesFlashed,
-                                        isColorPickerDialogVisible = isColorPickerDialogVisible,
                                         navToPermissionScreen = {
                                             navController.navigate(PERMISSION_SCREEN)
                                         },
-                                        onColorPickerOpen = {
-                                            isColorPickerDialogVisible = true
+                                        isColorPickerDialogVisible = isColorPickerDialogVisible,
+                                        onColorPickerOpen = { isColorPickerDialogVisible = true },
+                                        onColorPickerDismiss = { isColorPickerDialogVisible = false },
+                                        isSettingsDialogVisible = isSettingsDialogVisible,
+                                        onSettingsOpen = { isSettingsDialogVisible = true },
+                                        onSettingsDismiss = { isSettingsDialogVisible = false },
+                                        onMicrophoneSliderValueSelected = { value ->
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                sensitivitySettingsCache.set(value)
+                                                sensitivityThreshold = value
+                                            }
                                         },
-                                        onColorPickerDismiss = {
-                                            isColorPickerDialogVisible = false
-                                        }
+                                        currentSensitivityThreshold = sensitivityThreshold
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {
                                     PermissionAskScreen(
-                                        cameraPermissionStatus = cameraPermissionStatus,
-                                        audioRecordPermissionStatus = audioRecordPermissionStatus,
+                                        cameraAllowed = cameraPermissionStatus.bool,
+                                        audioRecordAllowed = audioRecordPermissionStatus.bool,
                                         onRequestPermissions = {
                                             requestPermissions(arrayOf(
                                                 Manifest.permission.CAMERA,

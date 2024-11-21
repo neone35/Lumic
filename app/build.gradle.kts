@@ -83,6 +83,10 @@ dependencies {
     // Logging
     implementation(libs.timber)
 
+    //DI
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+
     // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

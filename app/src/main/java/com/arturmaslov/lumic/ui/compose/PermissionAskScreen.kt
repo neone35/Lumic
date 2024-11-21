@@ -21,8 +21,8 @@ import com.arturmaslov.lumic.utils.PermissionStatus
 fun PreviewPermissionAskScreen() {
     LumicTheme {
         PermissionAskScreen(
-            cameraPermissionStatus = PermissionStatus.DENIED,
-            audioRecordPermissionStatus = PermissionStatus.DENIED,
+            cameraAllowed = false,
+            audioRecordAllowed = false,
             onRequestPermissions = { },
             navToMainScreen = { }
         )
@@ -31,14 +31,11 @@ fun PreviewPermissionAskScreen() {
 
 @Composable
 fun PermissionAskScreen(
-    cameraPermissionStatus: PermissionStatus,
-    audioRecordPermissionStatus: PermissionStatus,
+    cameraAllowed: Boolean,
+    audioRecordAllowed: Boolean,
     onRequestPermissions: () -> Unit,
     navToMainScreen: () -> Unit
 ) {
-    val cameraAllowed = cameraPermissionStatus == PermissionStatus.GRANTED
-    val audioRecordAllowed = audioRecordPermissionStatus == PermissionStatus.GRANTED
-
     // Content displayed when permissions are denied
     if (!cameraAllowed || !audioRecordAllowed) {
         Column(

@@ -3,11 +3,15 @@ package com.arturmaslov.lumic
 import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import com.arturmaslov.lumic.cache.SensitivitySettingCache
+import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
 import com.arturmaslov.lumic.utils.ActivityHelper
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.android.ext.android.inject
+import kotlin.getValue
 
 open class BaseActivity: ComponentActivity(), ActivityHelper {
 
@@ -39,6 +43,8 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
                 }
             }
         }
+
+    val sensitivitySettingsCache by inject<SensitivitySettingCache>()
 
     override fun setListeners() {}
     override fun setObservers() {}
