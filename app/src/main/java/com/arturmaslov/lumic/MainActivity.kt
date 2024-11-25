@@ -13,21 +13,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
-import com.arturmaslov.lumic.ui.compose.MainScreen
+import com.arturmaslov.lumic.ui.compose.main.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.ActivityHelper
@@ -106,7 +102,8 @@ class MainActivity : BaseActivity(), ActivityHelper {
                             ) {
                                 composable(MAIN_SCREEN) {
                                     MainScreen(
-                                        modifier = Modifier.padding(innerPadding),
+                                        modifier = Modifier
+                                            .padding(innerPadding),
                                         cameraAllowed = cameraPermissionStatus.bool,
                                         audioRecordAllowed = audioRecordPermissionStatus.bool,
                                         hasFlash = hasFlash,
