@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 class MainActivity : BaseActivity(), ActivityHelper {
 
@@ -81,10 +83,9 @@ class MainActivity : BaseActivity(), ActivityHelper {
             val loadStatusState = loadStatus().collectAsState().value
 
             var isColorPickerDialogVisible by remember { mutableStateOf(false) }
-            var colorSetting by remember { mutableStateOf(Color(COLOR_INITIAL)) }
+            var colorSetting by remember { mutableIntStateOf(COLOR_INITIAL) }
             LaunchedEffect(key1 = true) {
-                val currentColor = colorSettingsCache.get() ?: COLOR_INITIAL
-                colorSetting = Color(currentColor)
+                colorSetting = colorSettingsCache.get() ?: COLOR_INITIAL
             }
             var isSettingsDialogVisible by remember { mutableStateOf(false) }
             var sensitivityThreshold by remember { mutableFloatStateOf(SENSITIVITY_THRESHOLD_INITIAL) }
@@ -118,17 +119,18 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         onColorPickerDismiss = { isColorPickerDialogVisible = false },
                                         onColorSelected = { color ->
                                             CoroutineScope(Dispatchers.IO).launch {
-                                                colorSettingsCache.set(color.value.toLong())
-                                                colorSetting = Color(color.value.toLong())
+                                                colorSettingsCache.set(color)
+                                                colorSetting = color
                                             }
                                         },
-                                        currentColorSetting = colorSetting.toArgb().toLong(),
+                                        currentColorSetting = colorSetting,
                                         isSettingsDialogVisible = isSettingsDialogVisible,
                                         onSettingsOpen = { isSettingsDialogVisible = true },
                                         onSettingsDismiss = { isSettingsDialogVisible = false },
                                         onMicrophoneSliderValueSelected = { value ->
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 sensitivitySettingsCache.set(value)
+                                                Timber.d("Saved value: $value")
                                                 sensitivityThreshold = value
                                             }
                                         },

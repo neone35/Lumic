@@ -18,11 +18,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -75,29 +77,32 @@ fun MainScreen(
     navToPermissionScreen: () -> Unit = {},
     onColorPickerOpen: () -> Unit = {},
     onColorPickerDismiss: () -> Unit = {},
-    onColorSelected: (Color) -> Unit = {},
-    currentColorSetting: Long,
+    onColorSelected: (Int) -> Unit = {},
+    currentColorSetting: Int,
     isSettingsDialogVisible: Boolean,
     onSettingsOpen: () -> Unit = {},
     onSettingsDismiss: () -> Unit = {},
     onMicrophoneSliderValueSelected: (Float) -> Unit,
     currentSensitivityThreshold: Float
 ) {
-    val bgColor = remember { mutableStateOf(Color(currentColorSetting)) }
+    val bgColor = remember { mutableIntStateOf(currentColorSetting) }
     LaunchedEffect(timesFlashed) { // Restart the effect when the timesFlashed changes
-        val tempColor = bgColor.value
+        val tempColor = currentColorSetting
         if (timesFlashed > 0) {
-            bgColor.value = Color.Black
+            bgColor.value = Color.Black.toArgb()
             delay(FLASH_ON_DURATION_MS)
             bgColor.value = tempColor
         }
+    }
+    LaunchedEffect(currentColorSetting) { //changed outside, redraw
+        bgColor.value = currentColorSetting
     }
 
     if (cameraAllowed && audioRecordAllowed) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(bgColor.value),
+                .background(Color(bgColor.value)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

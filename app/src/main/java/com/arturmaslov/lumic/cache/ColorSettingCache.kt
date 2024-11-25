@@ -7,24 +7,24 @@ import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import kotlinx.coroutines.CoroutineDispatcher
 
 abstract class ColorSettingCache(dispatcher: CoroutineDispatcher) :
-    Cache<Long>(dispatcher)
+    Cache<Int>(dispatcher)
 
 class ColorSettingCacheImpl(
     dispatcher: CoroutineDispatcher,
     private val sharedPreferences: SharedPreferences
 ) : ColorSettingCache(dispatcher) {
 
-    override suspend fun getFromStorage(): Long {
-        val floatSetting = sharedPreferences.getLong(COLOR_SETTINGS_KEY, COLOR_INITIAL)
-        return floatSetting
+    override suspend fun getFromStorage(): Int {
+        val intSetting = sharedPreferences.getInt(COLOR_SETTINGS_KEY, COLOR_INITIAL)
+        return intSetting
     }
 
-    override suspend fun saveInStorage(value: Long) {
-        sharedPreferences.edit().putLong(COLOR_SETTINGS_KEY, value).apply()
+    override suspend fun saveInStorage(value: Int) {
+        sharedPreferences.edit().putInt(COLOR_SETTINGS_KEY, value).apply()
     }
 
     override suspend fun clearStorage() {
-        sharedPreferences.edit().putLong(COLOR_SETTINGS_KEY, 0L).apply()
+        sharedPreferences.edit().putInt(COLOR_SETTINGS_KEY, 0).apply()
     }
 
     companion object {

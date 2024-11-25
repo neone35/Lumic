@@ -12,7 +12,7 @@ object Constants {
     const val SENSITIVITY_THRESHOLD_STEPS: Int = 30;
     const val SENSITIVITY_THRESHOLD_MIN: Float = 100f;
     const val SENSITIVITY_THRESHOLD_MAX: Float = 1000f;
-    val COLOR_INITIAL: Long = Color.DarkGray.value.toLong();
+    const val COLOR_INITIAL: Int = 0xFF444444.toInt() //Color.DarkGray.value
 
     const val EMPTY_STRING: String = "";
     const val PREFS_DEFAULT = "prefs_default"
