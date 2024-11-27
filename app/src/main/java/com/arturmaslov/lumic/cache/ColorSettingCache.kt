@@ -15,7 +15,8 @@ class ColorSettingCacheImpl(
 ) : ColorSettingCache(dispatcher) {
 
     override suspend fun getFromStorage(): Int {
-        val intSetting = sharedPreferences.getInt(COLOR_SETTINGS_KEY, COLOR_INITIAL)
+        val intSetting = sharedPreferences
+            .getInt(COLOR_SETTINGS_KEY, COLOR_INITIAL)
         return intSetting
     }
 

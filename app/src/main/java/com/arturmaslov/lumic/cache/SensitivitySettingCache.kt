@@ -14,7 +14,8 @@ class SensitivitySettingCacheImpl(
 ) : SensitivitySettingCache(dispatcher) {
 
     override suspend fun getFromStorage(): Float {
-        val floatSetting = sharedPreferences.getFloat(SENSITIVITY_THRESHOLD_SETTINGS_KEY, SENSITIVITY_THRESHOLD_INITIAL)
+        val floatSetting = sharedPreferences
+            .getFloat(SENSITIVITY_THRESHOLD_SETTINGS_KEY, SENSITIVITY_THRESHOLD_INITIAL)
         return floatSetting
     }
 

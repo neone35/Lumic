@@ -1,5 +1,6 @@
 package com.arturmaslov.lumic.utils
 
+import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 
@@ -21,3 +22,5 @@ fun Int.modifyColor(factor: Float): Int {
         (targetColor.blue * 255).toInt()
     )
 }
+
+fun Context.getAppName(): String = applicationInfo.loadLabel(packageManager).toString()

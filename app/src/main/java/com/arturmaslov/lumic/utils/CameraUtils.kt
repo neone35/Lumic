@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Context.CAMERA_SERVICE
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
-import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
+import com.arturmaslov.lumic.ui.compose.main.FlashModeState
+import com.arturmaslov.lumic.utils.Constants.FLASH_MODE_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,12 +15,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import kotlin.getValue
 
 class CameraUtils(
     context: Context,
-    private val sensitivitySettingsCache: SensitivitySettingCache
+    private val sensitivitySettingsCache: SensitivitySettingCache,
+    private val flashSettingsCache: FlashSettingCache
 ) {
     private var cameraManager: CameraManager =
         context.getSystemService(CAMERA_SERVICE) as CameraManager
@@ -36,15 +37,24 @@ class CameraUtils(
         CoroutineScope(Dispatchers.IO).launch {
             val dataSnapshot = volumeData.toList() // Create a copy of the list to avoid concurrent issue
 
-            val dataNotEmpty = dataSnapshot.isNotEmpty()
             val currentSensitivityThreshold = sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
+            val currentFlashMode = flashSettingsCache.get()
+
+            val dataNotEmpty = dataSnapshot.isNotEmpty()
             val highAmplitude = dataSnapshot.any { it > currentSensitivityThreshold }
+            val bothAndFlash = when (currentFlashMode) {
+                FlashModeState.NONE -> false
+                FlashModeState.SCREEN -> false
+                FlashModeState.BOTH -> true
+                FlashModeState.FLASH -> true
+                else -> false
+            }
 
             if (dataNotEmpty && highAmplitude) {
-                cameraManager.setTorchMode(cameraId, true) // Turn on
+                if (bothAndFlash) cameraManager.setTorchMode(cameraId, true) // Turn on
                 timesFlashed.value++
-                delay(Constants.FLASH_ON_DURATION_MS)
-                cameraManager.setTorchMode(cameraId, false) // Turn off
+                if (bothAndFlash) delay(Constants.FLASH_ON_DURATION_MS)
+                if (bothAndFlash) cameraManager.setTorchMode(cameraId, false) // Turn off
             }
         }
     }

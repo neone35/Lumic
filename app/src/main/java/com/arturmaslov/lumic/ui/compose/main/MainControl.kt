@@ -45,6 +45,7 @@ import kotlin.Int
 fun PreviewMainControl() {
     LumicTheme {
         MainControl(
+            modifier = Modifier,
             bgTint = COLOR_INITIAL,
             onColorPickerOpen = { }
         )
@@ -54,11 +55,12 @@ fun PreviewMainControl() {
 
 @Composable
 fun MainControl(
+    modifier: Modifier,
     bgTint: Int,
     onColorPickerOpen: () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier.fillMaxWidth()
     ) {
         Icon(
             modifier = Modifier

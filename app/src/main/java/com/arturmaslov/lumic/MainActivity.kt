@@ -22,9 +22,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
 import com.arturmaslov.lumic.ui.compose.main.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
+import com.arturmaslov.lumic.ui.compose.main.FlashModeState
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.ActivityHelper
 import com.arturmaslov.lumic.utils.AudioUtils
@@ -88,6 +90,10 @@ class MainActivity : BaseActivity(), ActivityHelper {
             LaunchedEffect(key1 = true) {
                 sensitivityThreshold = sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
             }
+            var flashMode by remember { mutableStateOf(FlashModeState.BOTH) }
+            LaunchedEffect(key1 = true) {
+                flashMode = flashSettingsCache.get() ?: FlashModeState.BOTH
+            }
 
             LumicTheme {
                 Scaffold(
@@ -127,11 +133,17 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         onMicrophoneSliderValueSelected = { value ->
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 sensitivitySettingsCache.set(value)
-                                                Timber.d("Saved value: $value")
                                                 sensitivityThreshold = value
                                             }
                                         },
-                                        currentSensitivityThreshold = sensitivityThreshold
+                                        currentSensitivityThreshold = sensitivityThreshold,
+                                        onFlashModeSelected = { value ->
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                flashSettingsCache.set(value)
+                                                flashMode = value
+                                            }
+                                        },
+                                        currentFlashMode = flashMode
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {
@@ -166,8 +178,16 @@ class MainActivity : BaseActivity(), ActivityHelper {
                 cameraPermission == PermissionStatus.GRANTED
                         && audioPermission == PermissionStatus.GRANTED
             }.collect { bothPermissionsGranted ->
-                if (bothPermissionsGranted) {
-                    cameraUtils.checkIfHasFlash()
+                cameraUtils.checkIfHasFlash()
+                val currentFlashMode = flashSettingsCache.get()
+                val suitableFlashMode = when (currentFlashMode) {
+                    FlashModeState.NONE -> false
+                    FlashModeState.SCREEN -> true
+                    FlashModeState.BOTH -> true
+                    FlashModeState.FLASH -> true
+                    else -> false
+                }
+                if (bothPermissionsGranted && suitableFlashMode) {
                     launchRecordFlashing()
                 }
             }

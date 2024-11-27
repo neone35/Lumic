@@ -3,6 +3,8 @@ package com.arturmaslov.lumic.di
 import android.content.Context
 import com.arturmaslov.lumic.cache.ColorSettingCache
 import com.arturmaslov.lumic.cache.ColorSettingCacheImpl
+import com.arturmaslov.lumic.cache.FlashSettingCache
+import com.arturmaslov.lumic.cache.FlashSettingCacheImpl
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
 import com.arturmaslov.lumic.utils.CameraUtils
@@ -30,6 +32,13 @@ val cacheModule = module {
 
     single<ColorSettingCache> {
         ColorSettingCacheImpl(
+            dispatcher = Dispatchers.IO,
+            sharedPreferences = get(named(Constants.PREFS_DEFAULT))
+        )
+    }
+
+    single<FlashSettingCache> {
+        FlashSettingCacheImpl(
             dispatcher = Dispatchers.IO,
             sharedPreferences = get(named(Constants.PREFS_DEFAULT))
         )

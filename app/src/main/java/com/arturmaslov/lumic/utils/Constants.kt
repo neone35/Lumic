@@ -1,6 +1,7 @@
 package com.arturmaslov.lumic.utils
 
 import androidx.compose.ui.graphics.Color
+import com.arturmaslov.lumic.ui.compose.main.FlashModeState
 
 object Constants {
     const val FLASH_ON_DURATION_MS: Long = 200;
@@ -13,6 +14,7 @@ object Constants {
     const val SENSITIVITY_THRESHOLD_MIN: Float = 100f;
     const val SENSITIVITY_THRESHOLD_MAX: Float = 1000f;
     const val COLOR_INITIAL: Int = 0xFF444444.toInt() //Color.DarkGray.value
+    const val FLASH_MODE_INITIAL: String = "both"
 
     const val EMPTY_STRING: String = "";
     const val PREFS_DEFAULT = "prefs_default"
