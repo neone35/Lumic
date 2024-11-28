@@ -22,11 +22,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
 import com.arturmaslov.lumic.ui.compose.main.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
-import com.arturmaslov.lumic.ui.compose.main.FlashModeState
+import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.ActivityHelper
 import com.arturmaslov.lumic.utils.AudioUtils
@@ -44,7 +43,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 class MainActivity : BaseActivity(), ActivityHelper {
 
@@ -58,7 +56,11 @@ class MainActivity : BaseActivity(), ActivityHelper {
             baseCameraPermissionStatus to Manifest.permission.CAMERA,
             baseAudioRecordPermissionStatus to Manifest.permission.RECORD_AUDIO
         ).forEach { (status, permission) ->
-            if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 status.value = PermissionStatus.GRANTED
             }
         }
@@ -88,11 +90,12 @@ class MainActivity : BaseActivity(), ActivityHelper {
             var isSettingsDialogVisible by remember { mutableStateOf(false) }
             var sensitivityThreshold by remember { mutableFloatStateOf(SENSITIVITY_THRESHOLD_INITIAL) }
             LaunchedEffect(key1 = true) {
-                sensitivityThreshold = sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
+                sensitivityThreshold =
+                    sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
             }
-            var flashMode by remember { mutableStateOf(FlashModeState.BOTH) }
+            var flashMode by remember { mutableStateOf(FlashMode.BOTH) }
             LaunchedEffect(key1 = true) {
-                flashMode = flashSettingsCache.get() ?: FlashModeState.BOTH
+                flashMode = flashSettingsCache.get() ?: FlashMode.BOTH
             }
 
             LumicTheme {
@@ -119,7 +122,9 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         },
                                         isColorPickerDialogVisible = isColorPickerDialogVisible,
                                         onColorPickerOpen = { isColorPickerDialogVisible = true },
-                                        onColorPickerDismiss = { isColorPickerDialogVisible = false },
+                                        onColorPickerDismiss = {
+                                            isColorPickerDialogVisible = false
+                                        },
                                         onColorSelected = { color ->
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 colorSettingsCache.set(color)
@@ -143,7 +148,18 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                                 flashMode = value
                                             }
                                         },
-                                        currentFlashMode = flashMode
+                                        currentFlashMode = flashMode,
+                                        onStrobeModeChange = {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                if (flashMode != FlashMode.STROBE) {
+                                                    flashSettingsCache.set(FlashMode.STROBE)
+                                                    flashMode = FlashMode.STROBE
+                                                } else {
+                                                    flashSettingsCache.set(FlashMode.BOTH)
+                                                    flashMode = FlashMode.BOTH
+                                                }
+                                            }
+                                        }
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {
@@ -151,9 +167,12 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         cameraAllowed = cameraPermissionStatus.bool,
                                         audioRecordAllowed = audioRecordPermissionStatus.bool,
                                         onRequestPermissions = {
-                                            requestPermissions(arrayOf(
-                                                Manifest.permission.CAMERA,
-                                                Manifest.permission.RECORD_AUDIO))
+                                            requestPermissions(
+                                                arrayOf(
+                                                    Manifest.permission.CAMERA,
+                                                    Manifest.permission.RECORD_AUDIO
+                                                )
+                                            )
                                         },
                                         navToMainScreen = {
                                             navController.navigate(MAIN_SCREEN)
@@ -180,14 +199,14 @@ class MainActivity : BaseActivity(), ActivityHelper {
             }.collect { bothPermissionsGranted ->
                 cameraUtils.checkIfHasFlash()
                 val currentFlashMode = flashSettingsCache.get()
-                val suitableFlashMode = when (currentFlashMode) {
-                    FlashModeState.NONE -> false
-                    FlashModeState.SCREEN -> true
-                    FlashModeState.BOTH -> true
-                    FlashModeState.FLASH -> true
+                val notNoneFlashMode = when (currentFlashMode) {
+                    FlashMode.SCREEN -> true
+                    FlashMode.BOTH -> true
+                    FlashMode.FLASH -> true
+                    FlashMode.STROBE -> true
                     else -> false
                 }
-                if (bothPermissionsGranted && suitableFlashMode) {
+                if (bothPermissionsGranted && notNoneFlashMode) {
                     launchRecordFlashing()
                 }
             }

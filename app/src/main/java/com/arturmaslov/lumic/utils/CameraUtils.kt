@@ -6,8 +6,6 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
-import com.arturmaslov.lumic.ui.compose.main.FlashModeState
-import com.arturmaslov.lumic.utils.Constants.FLASH_MODE_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,30 +33,39 @@ class CameraUtils(
 
     fun flashLight(volumeData: List<Int>) {
         CoroutineScope(Dispatchers.IO).launch {
-            val dataSnapshot = volumeData.toList() // Create a copy of the list to avoid concurrent issue
+            val dataSnapshot =
+                volumeData.toList() // Create a copy of the list to avoid concurrent issue
 
-            val currentSensitivityThreshold = sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
+            val currentSensitivityThreshold =
+                sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
             val currentFlashMode = flashSettingsCache.get()
 
             val dataNotEmpty = dataSnapshot.isNotEmpty()
             val highAmplitude = dataSnapshot.any { it > currentSensitivityThreshold }
-            val bothAndFlash = when (currentFlashMode) {
-                FlashModeState.NONE -> false
-                FlashModeState.SCREEN -> false
-                FlashModeState.BOTH -> true
-                FlashModeState.FLASH -> true
+            val bothOrFlashMode = when (currentFlashMode) {
+                FlashMode.BOTH -> true
+                FlashMode.FLASH -> true
                 else -> false
             }
+            val strobeFlashMode = currentFlashMode == FlashMode.STROBE
 
-            if (dataNotEmpty && highAmplitude) {
-                if (bothAndFlash) cameraManager.setTorchMode(cameraId, true) // Turn on
+            if (strobeFlashMode) {
+                cameraManager.setTorchMode(cameraId, true) // Turn on
+                delay(STROBE_ON_DURATION)
+                cameraManager.setTorchMode(cameraId, false) // Turn off
+            } else if (dataNotEmpty && highAmplitude) {
+                if (bothOrFlashMode) cameraManager.setTorchMode(cameraId, true) // Turn on
                 timesFlashed.value++
-                if (bothAndFlash) delay(Constants.FLASH_ON_DURATION_MS)
-                if (bothAndFlash) cameraManager.setTorchMode(cameraId, false) // Turn off
+                if (bothOrFlashMode) delay(Constants.FLASH_ON_DURATION_MS)
+                if (bothOrFlashMode) cameraManager.setTorchMode(cameraId, false) // Turn off
             }
         }
     }
 
     fun timesFlashed() = timesFlashed as StateFlow<Int>
     fun hasFlash() = hasFlash as StateFlow<Boolean>
+
+    companion object {
+        const val STROBE_ON_DURATION = 500L
+    }
 }

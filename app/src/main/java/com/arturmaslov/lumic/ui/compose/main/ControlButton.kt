@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.arturmaslov.lumic.utils.ColorMode
 import com.arturmaslov.lumic.utils.Constants
 import com.arturmaslov.lumic.utils.modifyColor
 
@@ -32,9 +33,4 @@ fun ControlButton(
             modifier = Modifier.size(size),
         )
     }
-}
-
-enum class ColorMode(val value: Float) {
-    DARKER(0.6f),
-    LIGHTER(1.6f)
 }

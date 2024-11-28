@@ -18,18 +18,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.arturmaslov.lumic.R
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_MS
 import kotlinx.coroutines.delay
 import com.arturmaslov.lumic.ui.compose.ColorPickerDialog
 import com.arturmaslov.lumic.ui.compose.SettingsDialog
+import com.arturmaslov.lumic.utils.ColorMode
 import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
+import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.utils.getAppName
 import com.arturmaslov.lumic.utils.modifyColor
 import kotlin.Int
@@ -54,7 +58,7 @@ fun PreviewMainScreen() {
             onMicrophoneSliderValueSelected = { },
             currentSensitivityThreshold = SENSITIVITY_THRESHOLD_INITIAL,
             onFlashModeSelected = { },
-            currentFlashMode = FlashModeState.BOTH
+            currentFlashMode = FlashMode.BOTH
         )
     }
 }
@@ -78,19 +82,19 @@ fun MainScreen(
     onSettingsDismiss: () -> Unit = {},
     onMicrophoneSliderValueSelected: (Float) -> Unit,
     currentSensitivityThreshold: Float,
-    onFlashModeSelected: (FlashModeState) -> Unit,
-    currentFlashMode: FlashModeState
+    onFlashModeSelected: (FlashMode) -> Unit,
+    currentFlashMode: FlashMode,
+    onStrobeModeChange: () -> Unit = {}
 ) {
     val bgColor = remember { mutableIntStateOf(currentColorSetting) }
-    val bothAndScreen = when (currentFlashMode) {
-        FlashModeState.NONE -> false
-        FlashModeState.SCREEN -> true
-        FlashModeState.BOTH -> true
-        FlashModeState.FLASH -> false
+
+    val bothOrScreenFlashMode = when (currentFlashMode) {
+        FlashMode.SCREEN -> true
+        FlashMode.BOTH -> true
         else -> false
     }
     LaunchedEffect(timesFlashed) { // Restart the effect when the timesFlashed changes
-        if (bothAndScreen) {
+        if (bothOrScreenFlashMode) {
             val tempColor = currentColorSetting
             if (timesFlashed > 0) {
                 bgColor.intValue = COLOR_INITIAL
@@ -103,20 +107,20 @@ fun MainScreen(
         bgColor.intValue = currentColorSetting
     }
     LaunchedEffect(currentFlashMode) {
-        if (bothAndScreen) {
+        if (bothOrScreenFlashMode) {
             bgColor.intValue = currentColorSetting
         }
     }
 
     if (cameraAllowed && audioRecordAllowed) {
-        val finalColor = if (!bothAndScreen) {
+        val finalColor = if (!bothOrScreenFlashMode) {
             bgColor.intValue = COLOR_INITIAL
             Color(COLOR_INITIAL)
         } else {
             Color(bgColor.intValue)
         }
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(finalColor)
         ) {
@@ -135,7 +139,7 @@ fun MainScreen(
                     bgColor = darkerColor,
                     iconColor = Color(bgColor.intValue),
                     onFlashModeSelected = onFlashModeSelected,
-                    currentFlashModeString = currentFlashMode,
+                    currentFlashMode = currentFlashMode,
                     hasFlash = hasFlash
                 )
             }
@@ -170,6 +174,18 @@ fun MainScreen(
                     iconVector = Icons.Filled.Settings,
                     contentDescription = "Settings",
                     size = 60.dp
+                )
+                val strobeIcon = if (currentFlashMode == FlashMode.STROBE) {
+                    ImageVector.vectorResource(R.drawable.ic_strobe_on)
+                } else {
+                    ImageVector.vectorResource(R.drawable.ic_strobe_off)
+                }
+                ControlButton(
+                    bgTint = bgColor.intValue,
+                    onControlButtonClick = onStrobeModeChange,
+                    iconVector = strobeIcon,
+                    contentDescription = "Strobe mode",
+                    size = 50.dp
                 )
             }
 

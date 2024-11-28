@@ -1,30 +1,28 @@
 package com.arturmaslov.lumic.cache
 
 import android.content.SharedPreferences
-import androidx.compose.ui.graphics.Color
-import com.arturmaslov.lumic.ui.compose.main.FlashModeState
 import com.arturmaslov.lumic.utils.Cache
-import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import com.arturmaslov.lumic.utils.Constants.FLASH_MODE_INITIAL
+import com.arturmaslov.lumic.utils.FlashMode
 import kotlinx.coroutines.CoroutineDispatcher
 
 abstract class FlashSettingCache(dispatcher: CoroutineDispatcher) :
-    Cache<FlashModeState>(dispatcher)
+    Cache<FlashMode>(dispatcher)
 
 class FlashSettingCacheImpl(
     dispatcher: CoroutineDispatcher,
     private val sharedPreferences: SharedPreferences
 ) : FlashSettingCache(dispatcher) {
 
-    override suspend fun getFromStorage(): FlashModeState {
+    override suspend fun getFromStorage(): FlashMode {
         val stringSetting = sharedPreferences
             .getString(FLASH_SETTING_KEY, FLASH_MODE_INITIAL)
             ?: FLASH_MODE_INITIAL
-        val returnSetting = getFlashModeState(stringSetting)
-        return returnSetting
+        val flashModeSetting = getFlashMode(stringSetting)
+        return flashModeSetting
     }
 
-    override suspend fun saveInStorage(value: FlashModeState) {
+    override suspend fun saveInStorage(value: FlashMode) {
         val stringSetting = getFlashModeString(value)
         sharedPreferences.edit().putString(FLASH_SETTING_KEY, stringSetting).apply()
     }
@@ -33,23 +31,25 @@ class FlashSettingCacheImpl(
         sharedPreferences.edit().putString(FLASH_SETTING_KEY, FLASH_MODE_INITIAL).apply()
     }
 
-    private fun getFlashModeString(flashModeState: FlashModeState): String {
-        return when (flashModeState) {
-            FlashModeState.NONE -> FlashModeState.NONE.stateString
-            FlashModeState.SCREEN -> FlashModeState.SCREEN.stateString
-            FlashModeState.BOTH -> FlashModeState.BOTH.stateString
-            FlashModeState.FLASH -> FlashModeState.FLASH.stateString
+    private fun getFlashModeString(flashMode: FlashMode): String {
+        return when (flashMode) {
+            FlashMode.NONE -> FlashMode.NONE.string
+            FlashMode.SCREEN -> FlashMode.SCREEN.string
+            FlashMode.BOTH -> FlashMode.BOTH.string
+            FlashMode.FLASH -> FlashMode.FLASH.string
+            FlashMode.STROBE -> FlashMode.STROBE.string
             else -> FLASH_MODE_INITIAL
         }
     }
 
-    private fun getFlashModeState(flashModeString: String): FlashModeState {
+    private fun getFlashMode(flashModeString: String): FlashMode {
         return when (flashModeString) {
-            FlashModeState.NONE.stateString -> FlashModeState.NONE
-            FlashModeState.SCREEN.stateString -> FlashModeState.SCREEN
-            FlashModeState.BOTH.stateString -> FlashModeState.BOTH
-            FlashModeState.FLASH.stateString -> FlashModeState.FLASH
-            else -> FlashModeState.NONE
+            FlashMode.NONE.string -> FlashMode.NONE
+            FlashMode.SCREEN.string -> FlashMode.SCREEN
+            FlashMode.BOTH.string -> FlashMode.BOTH
+            FlashMode.FLASH.string -> FlashMode.FLASH
+            FlashMode.STROBE.string -> FlashMode.STROBE
+            else -> FlashMode.NONE
         }
     }
 

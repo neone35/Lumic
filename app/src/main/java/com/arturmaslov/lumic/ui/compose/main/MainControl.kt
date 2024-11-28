@@ -35,6 +35,7 @@ import kotlinx.coroutines.delay
 import com.arturmaslov.lumic.R
 import com.arturmaslov.lumic.ui.compose.ColorPickerDialog
 import com.arturmaslov.lumic.ui.compose.SettingsDialog
+import com.arturmaslov.lumic.utils.ColorMode
 import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.modifyColor

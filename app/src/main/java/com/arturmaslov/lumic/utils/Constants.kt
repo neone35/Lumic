@@ -1,8 +1,5 @@
 package com.arturmaslov.lumic.utils
 
-import androidx.compose.ui.graphics.Color
-import com.arturmaslov.lumic.ui.compose.main.FlashModeState
-
 object Constants {
     const val FLASH_ON_DURATION_MS: Long = 200;
     const val AMPLITUDE_RECORD_INTERVAL_MS: Long = 100;

@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.arturmaslov.lumic.MainActivity
 import com.arturmaslov.lumic.ui.theme.LumicTheme
-import com.arturmaslov.lumic.utils.PermissionStatus
 
 @Composable
 @Preview(showBackground = true)
