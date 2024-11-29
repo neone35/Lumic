@@ -10,6 +10,7 @@ import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
 import com.arturmaslov.lumic.utils.ActivityHelper
 import com.arturmaslov.lumic.utils.AudioUtils
 import com.arturmaslov.lumic.utils.CameraUtils
+import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +48,7 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
                 }
             }
         }
+    val baseFlashMode = MutableStateFlow(FlashMode.BOTH)
 
     val sensitivitySettingsCache by inject<SensitivitySettingCache>()
     val colorSettingsCache by inject<ColorSettingCache>()

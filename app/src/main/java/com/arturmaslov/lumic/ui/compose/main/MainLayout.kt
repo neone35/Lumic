@@ -156,7 +156,7 @@ fun MainScreen(
                     .padding(top = 400.dp),
                 text = LocalContext.current.getAppName().lowercase(),
                 color = darkerColor,
-                fontSize = 30.sp
+                fontSize = 26.sp
             )
 
             Row (

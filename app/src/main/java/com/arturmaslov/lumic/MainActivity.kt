@@ -93,9 +93,9 @@ class MainActivity : BaseActivity(), ActivityHelper {
                 sensitivityThreshold =
                     sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
             }
-            var flashMode by remember { mutableStateOf(FlashMode.BOTH) }
+            var flashMode = baseFlashMode.collectAsState().value
             LaunchedEffect(key1 = true) {
-                flashMode = flashSettingsCache.get() ?: FlashMode.BOTH
+                baseFlashMode.value = flashSettingsCache.get() ?: FlashMode.BOTH
             }
 
             LumicTheme {
@@ -145,7 +145,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         onFlashModeSelected = { value ->
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 flashSettingsCache.set(value)
-                                                flashMode = value
+                                                baseFlashMode.value = value
                                             }
                                         },
                                         currentFlashMode = flashMode,
@@ -153,10 +153,10 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 if (flashMode != FlashMode.STROBE) {
                                                     flashSettingsCache.set(FlashMode.STROBE)
-                                                    flashMode = FlashMode.STROBE
+                                                    baseFlashMode.value = FlashMode.STROBE
                                                 } else {
                                                     flashSettingsCache.set(FlashMode.BOTH)
-                                                    flashMode = FlashMode.BOTH
+                                                    baseFlashMode.value = FlashMode.BOTH
                                                 }
                                             }
                                         }
@@ -215,12 +215,15 @@ class MainActivity : BaseActivity(), ActivityHelper {
 
     private fun launchRecordFlashing() {
         recordFlashJob = CoroutineScope(Dispatchers.IO).launch {
-            while (isActive) {
-                audioUtils.startRecording()
-                delay(Constants.AUDIO_RECORD_INTERVAL_MS)
-                cameraUtils.flashLight(audioUtils.volumeData)
-                delay(Constants.DELAY_FROM_FLASH_TO_STOP_MS)
-                audioUtils.stopRecording()
+            baseFlashMode.collect {
+                while (isActive) {
+                    val notStrobe = baseFlashMode.value != FlashMode.STROBE
+                    if (notStrobe) audioUtils.startRecording()
+                    if (notStrobe) delay(Constants.AUDIO_RECORD_INTERVAL_MS)
+                    cameraUtils.flashLight(audioUtils.volumeData)
+                    delay(Constants.DELAY_FROM_FLASH_TO_STOP_MS)
+                    audioUtils.stopRecording() // needed on switch to strobe
+                }
             }
         }
     }

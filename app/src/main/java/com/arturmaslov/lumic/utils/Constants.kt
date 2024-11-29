@@ -5,6 +5,7 @@ object Constants {
     const val AMPLITUDE_RECORD_INTERVAL_MS: Long = 100;
     const val AUDIO_RECORD_INTERVAL_MS: Long = 500;
     const val DELAY_FROM_FLASH_TO_STOP_MS: Long = 50;
+    const val STROBE_ON_DURATION = 1000L
 
     const val SENSITIVITY_THRESHOLD_INITIAL: Float = 400f;
     const val SENSITIVITY_THRESHOLD_STEPS: Int = 30;

@@ -1,11 +1,11 @@
 package com.arturmaslov.lumic.utils
 
 enum class FlashMode(val string: String) {
-    BOTH("both"),
+    BOTH("both"), // flash and screen
     FLASH("flash"),
     SCREEN("screen"),
-    NONE("none"),
-    STROBE("strobe")
+    NONE("none"), // nothing at all
+    STROBE("strobe") // only flash as fast as possible
 }
 
 enum class ColorMode(val value: Float) {

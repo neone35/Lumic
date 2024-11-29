@@ -7,6 +7,7 @@ import android.hardware.camera2.CameraManager
 import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
+import com.arturmaslov.lumic.utils.Constants.STROBE_ON_DURATION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -55,7 +56,7 @@ class CameraUtils(
                 cameraManager.setTorchMode(cameraId, false) // Turn off
             } else if (dataNotEmpty && highAmplitude) {
                 if (bothOrFlashMode) cameraManager.setTorchMode(cameraId, true) // Turn on
-                timesFlashed.value++
+                timesFlashed.value++ // needed for screen flash also
                 if (bothOrFlashMode) delay(Constants.FLASH_ON_DURATION_MS)
                 if (bothOrFlashMode) cameraManager.setTorchMode(cameraId, false) // Turn off
             }
@@ -64,8 +65,4 @@ class CameraUtils(
 
     fun timesFlashed() = timesFlashed as StateFlow<Int>
     fun hasFlash() = hasFlash as StateFlow<Boolean>
-
-    companion object {
-        const val STROBE_ON_DURATION = 500L
-    }
 }
