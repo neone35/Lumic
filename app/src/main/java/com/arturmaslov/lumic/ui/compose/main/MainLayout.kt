@@ -126,54 +126,38 @@ fun MainScreen(
         ) {
             val darkerColor = Color(bgColor.intValue.modifyColor(ColorMode.DARKER.value))
 
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter)
-                    .wrapContentHeight(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                MultiChoiceFab(
-                    bgColor = darkerColor,
-                    iconColor = Color(bgColor.intValue),
-                    onFlashModeSelected = onFlashModeSelected,
-                    currentFlashMode = currentFlashMode,
-                    hasFlash = hasFlash
+            if (currentFlashMode != FlashMode.STROBE) {
+                MainControl(
+                    modifier = Modifier.align(Alignment.Center),
+                    bgTint = bgColor.intValue,
+                    onColorPickerOpen = onColorPickerOpen,
+                    onSettingsOpen = onSettingsOpen,
                 )
             }
 
-            MainControl(
-                modifier = Modifier.align(Alignment.Center),
-                bgTint = bgColor.intValue,
-                onColorPickerOpen = onColorPickerOpen
-            )
-
             Text(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(top = 400.dp),
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp),
                 text = LocalContext.current.getAppName().lowercase(),
                 color = darkerColor,
                 fontSize = 26.sp
             )
 
-            Row (
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
                     .align(Alignment.BottomCenter)
-                    .wrapContentHeight(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+                    .wrapContentHeight()
             ) {
-                ControlButton(
-                    bgTint = bgColor.intValue,
-                    onControlButtonClick = onSettingsOpen,
-                    iconVector = Icons.Filled.Settings,
-                    contentDescription = "Settings",
-                    size = 60.dp
+                MultiChoiceFab(
+                    modifier = Modifier.align(Alignment.BottomStart),
+                    bgColor = darkerColor,
+                    iconColor = Color(bgColor.intValue),
+                    onFlashModeSelected = onFlashModeSelected,
+                    currentFlashMode = currentFlashMode,
+                    hasFlash = hasFlash
                 )
                 val strobeIcon = if (currentFlashMode == FlashMode.STROBE) {
                     ImageVector.vectorResource(R.drawable.ic_strobe_on)
@@ -181,6 +165,7 @@ fun MainScreen(
                     ImageVector.vectorResource(R.drawable.ic_strobe_off)
                 }
                 ControlButton(
+                    modifier = Modifier.align(Alignment.BottomEnd),
                     bgTint = bgColor.intValue,
                     onControlButtonClick = onStrobeModeChange,
                     iconVector = strobeIcon,

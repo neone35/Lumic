@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -62,7 +63,7 @@ fun SettingsDialog(
             ) {
                 Text(
                     text = "Settings",
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
                 SliderItem(
                     sliderTitle = "Microphone sensitivity",
@@ -117,7 +118,7 @@ fun SliderItem(
     ) {
         Text(
             text = slidingRange.start.toInt().toString(),
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.labelSmall
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(

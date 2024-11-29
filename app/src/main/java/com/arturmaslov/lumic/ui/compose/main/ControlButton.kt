@@ -15,6 +15,7 @@ import com.arturmaslov.lumic.utils.modifyColor
 
 @Composable
 fun ControlButton(
+    modifier: Modifier = Modifier,
     bgTint: Int,
     onControlButtonClick: () -> Unit,
     iconVector: ImageVector,
@@ -24,7 +25,7 @@ fun ControlButton(
 ) {
     IconButton(
         onClick = onControlButtonClick,
-        Modifier.size(60.dp)
+        modifier.size(60.dp)
     ) {
         Icon(
             iconVector,

@@ -16,10 +16,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arturmaslov.lumic.R
+import com.arturmaslov.lumic.utils.Constants
 import com.arturmaslov.lumic.utils.FlashMode
 
 @Composable
 fun MultiChoiceFab(
+    modifier: Modifier = Modifier,
     bgColor: Color,
     iconColor: Color,
     onFlashModeSelected: (FlashMode) -> Unit,
@@ -29,7 +31,7 @@ fun MultiChoiceFab(
     var expanded by remember { mutableStateOf(false) } // State to track expansion
     val rotationAngle by animateFloatAsState(
         targetValue = if (expanded) 45f else 0f,
-        label = ""
+        label = "45degrees"
     ) // Animate rotation
     var currentFlashState by remember { mutableStateOf(currentFlashMode) }
     val currentIcon = when (currentFlashState) {
@@ -45,28 +47,13 @@ fun MultiChoiceFab(
 
     if (currentFlashState != FlashMode.STROBE) {
         Box(
+            modifier,
             contentAlignment = Alignment.BottomEnd
         ) {
             Column(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                // Main FAB
-                FloatingActionButton(
-                    onClick = { expanded = !expanded },
-                    shape = CircleShape,
-                    containerColor = bgColor,
-                    modifier = Modifier.size(56.dp)
-                ) {
-                    Icon(
-                        currentIcon,
-                        contentDescription = null,
-                        tint = iconColor,
-                        modifier = Modifier
-                            .rotate(rotationAngle)
-                            .size(24.dp)
-                    )
-                }
                 // Show options only when expanded
                 if (expanded) {
                     if (currentFlashState != FlashMode.BOTH && hasFlash)
@@ -117,6 +104,22 @@ fun MultiChoiceFab(
                             },
                             iconVector = ImageVector.vectorResource(R.drawable.ic_light_none)
                         )
+                }
+                // Main FAB
+                FloatingActionButton(
+                    onClick = { expanded = !expanded },
+                    shape = CircleShape,
+                    containerColor = bgColor,
+                    modifier = Modifier.size(56.dp)
+                ) {
+                    Icon(
+                        currentIcon,
+                        contentDescription = null,
+                        tint = iconColor,
+                        modifier = Modifier
+                            .rotate(rotationAngle)
+                            .size(24.dp)
+                    )
                 }
             }
         }

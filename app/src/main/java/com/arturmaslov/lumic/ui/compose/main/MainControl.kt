@@ -48,7 +48,8 @@ fun PreviewMainControl() {
         MainControl(
             modifier = Modifier,
             bgTint = COLOR_INITIAL,
-            onColorPickerOpen = { }
+            onColorPickerOpen = { },
+            onSettingsOpen = { },
         )
     }
 }
@@ -58,7 +59,8 @@ fun PreviewMainControl() {
 fun MainControl(
     modifier: Modifier,
     bgTint: Int,
-    onColorPickerOpen: () -> Unit = {}
+    onColorPickerOpen: () -> Unit = {},
+    onSettingsOpen: () -> Unit = {},
 ) {
     Box(
         modifier.fillMaxWidth()
@@ -69,8 +71,31 @@ fun MainControl(
                 .align(Alignment.Center),
             imageVector = ImageVector.vectorResource(R.drawable.main_controls_shape),
             contentDescription = "Main controls",
-            tint = Color(bgTint.modifyColor(0.6f))
+            tint = Color(bgTint.modifyColor(ColorMode.DARKER.value))
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalArrangement = Arrangement.SpaceAround,
+        ) {
+            ControlButton(
+                bgTint = bgTint,
+                onControlButtonClick = onSettingsOpen,
+                iconVector = Icons.Filled.Settings,
+                contentDescription = "Settings",
+                size = 50.dp,
+                colorMode = ColorMode.LIGHTER
+            )
+            ControlButton(
+                bgTint = bgTint,
+                onControlButtonClick = onSettingsOpen,
+                iconVector = Icons.Filled.Settings,
+                contentDescription = "Settings",
+                size = 50.dp,
+                colorMode = ColorMode.LIGHTER
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
