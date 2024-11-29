@@ -132,6 +132,8 @@ fun MainScreen(
                     bgTint = bgColor.intValue,
                     onColorPickerOpen = onColorPickerOpen,
                     onSettingsOpen = onSettingsOpen,
+                    currentFlashMode = currentFlashMode,
+                    onFlashModeSelected = onFlashModeSelected
                 )
             }
 

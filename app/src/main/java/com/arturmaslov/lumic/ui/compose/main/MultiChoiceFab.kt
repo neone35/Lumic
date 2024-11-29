@@ -33,19 +33,20 @@ fun MultiChoiceFab(
         targetValue = if (expanded) 45f else 0f,
         label = "45degrees"
     ) // Animate rotation
-    var currentFlashState by remember { mutableStateOf(currentFlashMode) }
-    val currentIcon = when (currentFlashState) {
+    val currentIcon = when (currentFlashMode) {
         FlashMode.BOTH -> ImageVector.vectorResource(R.drawable.ic_light_both)
         FlashMode.FLASH -> ImageVector.vectorResource(R.drawable.ic_light_flash)
         FlashMode.SCREEN -> ImageVector.vectorResource(R.drawable.ic_light_screen)
         FlashMode.NONE -> ImageVector.vectorResource(R.drawable.ic_light_none)
         else -> ImageVector.vectorResource(R.drawable.ic_light_both)
     }
-    LaunchedEffect(currentFlashMode) {
-        currentFlashState = currentFlashMode
-    }
 
-    if (currentFlashState != FlashMode.STROBE) {
+    val notNoneOrStrobe = when (currentFlashMode) {
+        FlashMode.STROBE -> false
+        FlashMode.NONE -> false
+        else -> true
+    }
+    if (notNoneOrStrobe) {
         Box(
             modifier,
             contentAlignment = Alignment.BottomEnd
@@ -56,53 +57,38 @@ fun MultiChoiceFab(
             ) {
                 // Show options only when expanded
                 if (expanded) {
-                    if (currentFlashState != FlashMode.BOTH && hasFlash)
+                    if (currentFlashMode != FlashMode.BOTH && hasFlash)
                         FabOption(
                             bgColor,
                             iconColor,
                             label = "Both",
                             onClick = {
                                 onFlashModeSelected(FlashMode.BOTH)
-                                currentFlashState = FlashMode.BOTH
                                 expanded = false
                             },
                             iconVector = ImageVector.vectorResource(R.drawable.ic_light_both)
                         )
-                    if (currentFlashState != FlashMode.FLASH && hasFlash)
+                    if (currentFlashMode != FlashMode.FLASH && hasFlash)
                         FabOption(
                             bgColor,
                             iconColor,
                             label = "Flash",
                             onClick = {
                                 onFlashModeSelected(FlashMode.FLASH)
-                                currentFlashState = FlashMode.FLASH
                                 expanded = false
                             },
                             iconVector = ImageVector.vectorResource(R.drawable.ic_light_flash)
                         )
-                    if (currentFlashState != FlashMode.SCREEN)
+                    if (currentFlashMode != FlashMode.SCREEN)
                         FabOption(
                             bgColor,
                             iconColor,
                             label = "Screen",
                             onClick = {
                                 onFlashModeSelected(FlashMode.SCREEN)
-                                currentFlashState = FlashMode.SCREEN
                                 expanded = false
                             },
                             iconVector = ImageVector.vectorResource(R.drawable.ic_light_screen)
-                        )
-                    if (currentFlashState != FlashMode.NONE)
-                        FabOption(
-                            bgColor,
-                            iconColor,
-                            label = "None",
-                            onClick = {
-                                onFlashModeSelected(FlashMode.NONE)
-                                currentFlashState = FlashMode.NONE
-                                expanded = false
-                            },
-                            iconVector = ImageVector.vectorResource(R.drawable.ic_light_none)
                         )
                 }
                 // Main FAB

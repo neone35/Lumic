@@ -25,7 +25,7 @@ fun ControlButton(
 ) {
     IconButton(
         onClick = onControlButtonClick,
-        modifier.size(60.dp)
+        modifier.size(size)
     ) {
         Icon(
             iconVector,

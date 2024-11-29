@@ -38,6 +38,7 @@ import com.arturmaslov.lumic.ui.compose.SettingsDialog
 import com.arturmaslov.lumic.utils.ColorMode
 import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
+import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.utils.modifyColor
 import kotlin.Int
 
@@ -50,6 +51,8 @@ fun PreviewMainControl() {
             bgTint = COLOR_INITIAL,
             onColorPickerOpen = { },
             onSettingsOpen = { },
+            currentFlashMode = FlashMode.BOTH,
+            onFlashModeSelected = { }
         )
     }
 }
@@ -61,55 +64,93 @@ fun MainControl(
     bgTint: Int,
     onColorPickerOpen: () -> Unit = {},
     onSettingsOpen: () -> Unit = {},
+    currentFlashMode: FlashMode,
+    onFlashModeSelected: (FlashMode) -> Unit,
 ) {
+    val notNoneOrStrobe = when (currentFlashMode) {
+        FlashMode.STROBE -> false
+        FlashMode.NONE -> false
+        else -> true
+    }
+
     Box(
         modifier.fillMaxWidth()
     ) {
-        Icon(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            imageVector = ImageVector.vectorResource(R.drawable.main_controls_shape),
-            contentDescription = "Main controls",
-            tint = Color(bgTint.modifyColor(ColorMode.DARKER.value))
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            horizontalArrangement = Arrangement.SpaceAround,
-        ) {
-            ControlButton(
-                bgTint = bgTint,
-                onControlButtonClick = onSettingsOpen,
-                iconVector = Icons.Filled.Settings,
-                contentDescription = "Settings",
-                size = 50.dp,
-                colorMode = ColorMode.LIGHTER
+        if (notNoneOrStrobe) {
+            // background
+            Icon(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                imageVector = ImageVector.vectorResource(R.drawable.main_controls_shape),
+                contentDescription = "Main controls",
+                tint = Color(bgTint.modifyColor(ColorMode.DARKER.value))
             )
-            ControlButton(
-                bgTint = bgTint,
-                onControlButtonClick = onSettingsOpen,
-                iconVector = Icons.Filled.Settings,
-                contentDescription = "Settings",
-                size = 50.dp,
-                colorMode = ColorMode.LIGHTER
-            )
+            // center controls
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                horizontalArrangement = Arrangement.SpaceAround,
+            ) {
+                ControlButton(
+                    bgTint = bgTint,
+                    onControlButtonClick = onSettingsOpen,
+                    iconVector = Icons.Filled.Settings,
+                    contentDescription = "Settings",
+                    size = 50.dp,
+                    colorMode = ColorMode.LIGHTER
+                )
+                ControlButton(
+                    bgTint = bgTint,
+                    onControlButtonClick = onSettingsOpen,
+                    iconVector = Icons.Filled.Settings,
+                    contentDescription = "Settings",
+                    size = 50.dp,
+                    colorMode = ColorMode.LIGHTER
+                )
+            }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            ControlButton(
-                bgTint = bgTint,
-                onControlButtonClick = onColorPickerOpen,
-                iconVector = ImageVector.vectorResource(R.drawable.ic_palette),
-                contentDescription = "Color picker",
-                size = 50.dp,
-                colorMode = ColorMode.LIGHTER
-            )
+
+        // main control (play / stop)
+        val startStopIcon = if (notNoneOrStrobe) {
+            ImageVector.vectorResource(R.drawable.ic_stop_circle)
+        } else {
+            ImageVector.vectorResource(R.drawable.ic_play_circle)
+        }
+        ControlButton(
+            modifier = Modifier.align(Alignment.Center),
+            bgTint = bgTint,
+            onControlButtonClick = {
+                if (notNoneOrStrobe) {
+                    onFlashModeSelected(FlashMode.NONE)
+                } else {
+                    onFlashModeSelected(FlashMode.BOTH)
+                }
+            },
+            iconVector = startStopIcon,
+            contentDescription = "Play/Stop",
+            size = 100.dp,
+            colorMode = ColorMode.LIGHTER
+        )
+
+        // bottom controls
+        if (notNoneOrStrobe) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                ControlButton(
+                    bgTint = bgTint,
+                    onControlButtonClick = onColorPickerOpen,
+                    iconVector = ImageVector.vectorResource(R.drawable.ic_palette),
+                    contentDescription = "Color picker",
+                    size = 50.dp,
+                    colorMode = ColorMode.LIGHTER
+                )
+            }
         }
     }
 }
