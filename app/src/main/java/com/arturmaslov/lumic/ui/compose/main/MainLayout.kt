@@ -1,15 +1,11 @@
 package com.arturmaslov.lumic.ui.compose.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arturmaslov.lumic.R
 import com.arturmaslov.lumic.ui.theme.LumicTheme
-import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_MS
+import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
 import kotlinx.coroutines.delay
 import com.arturmaslov.lumic.ui.compose.ColorPickerDialog
 import com.arturmaslov.lumic.ui.compose.SettingsDialog
@@ -58,7 +54,10 @@ fun PreviewMainScreen() {
             onMicrophoneSliderValueSelected = { },
             currentSensitivityThreshold = SENSITIVITY_THRESHOLD_INITIAL,
             onFlashModeSelected = { },
-            currentFlashMode = FlashMode.BOTH
+            currentFlashMode = FlashMode.BOTH,
+            onStrobeModeChange = { },
+            onFlashDurationSliderValueSelected = { },
+            currentFlashDuration = FLASH_ON_DURATION_INITIAL.toFloat()
         )
     }
 }
@@ -84,7 +83,9 @@ fun MainScreen(
     currentSensitivityThreshold: Float,
     onFlashModeSelected: (FlashMode) -> Unit,
     currentFlashMode: FlashMode,
-    onStrobeModeChange: () -> Unit = {}
+    onStrobeModeChange: () -> Unit = {},
+    onFlashDurationSliderValueSelected: (Float) -> Unit,
+    currentFlashDuration: Float
 ) {
     val bgColor = remember { mutableIntStateOf(currentColorSetting) }
 
@@ -98,7 +99,7 @@ fun MainScreen(
             val tempColor = currentColorSetting
             if (timesFlashed > 0) {
                 bgColor.intValue = COLOR_INITIAL
-                delay(FLASH_ON_DURATION_MS)
+                delay(currentFlashDuration.toLong())
                 bgColor.intValue = tempColor
             }
         }
@@ -188,7 +189,9 @@ fun MainScreen(
             SettingsDialog(
                 onSettingsDismiss = onSettingsDismiss,
                 onMicrophoneSliderValueSelected = onMicrophoneSliderValueSelected,
-                currentSensitivityThreshold = currentSensitivityThreshold
+                currentSensitivityThreshold = currentSensitivityThreshold,
+                onFlashDurationSliderValueSelected = onFlashDurationSliderValueSelected,
+                currentFlashDuration = currentFlashDuration
             )
         }
     } else {

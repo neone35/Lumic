@@ -1,11 +1,13 @@
 package com.arturmaslov.lumic.ui.compose
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -14,9 +16,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.arturmaslov.lumic.MainActivity
 import com.arturmaslov.lumic.ui.theme.LumicTheme
+import com.arturmaslov.lumic.utils.getAppName
 
 @Composable
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showSystemUi = true
+)
 fun PreviewPermissionAskScreen() {
     LumicTheme {
         PermissionAskScreen(
@@ -45,13 +52,14 @@ fun PermissionAskScreen(
             verticalArrangement = Arrangement.Center
         ) {
             // Display permission status
-            if (!cameraAllowed && !audioRecordAllowed) {
-                Text(text = "Camera and audio permission denied", color = Color.Red, fontWeight = FontWeight.Bold)
-            } else if (!cameraAllowed) {
-                Text(text = "Camera permission denied", color = Color.Red, fontWeight = FontWeight.Bold)
-            } else if (!audioRecordAllowed) {
-                Text(text = "Audio permission denied", color = Color.Red, fontWeight = FontWeight.Bold)
-            }
+//            if (!cameraAllowed && !audioRecordAllowed) {
+//                Text(text = "Camera and audio permission denied", color = Color.Red, fontWeight = FontWeight.Bold)
+//            } else if (!cameraAllowed) {
+//                Text(text = "Camera permission denied", color = Color.Red, fontWeight = FontWeight.Bold)
+//            } else if (!audioRecordAllowed) {
+//                Text(text = "Audio permission denied", color = Color.Red, fontWeight = FontWeight.Bold)
+//            }
+
 
             Spacer(modifier = Modifier.height(24.dp))
             // Icon and explanation
@@ -84,6 +92,14 @@ fun PermissionAskScreen(
             Button(onClick = onRequestPermissions) {
                 Text("Allow")
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = "This app contains flashing effects that may trigger seizures in photosensitive individuals. Use with caution.",
+                textAlign = TextAlign.Center,
+                color = Color.Gray,
+                fontSize = 12.sp
+            )
         }
     } else {
         // Permissions granted state

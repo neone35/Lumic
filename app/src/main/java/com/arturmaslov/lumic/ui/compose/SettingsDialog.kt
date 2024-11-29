@@ -20,11 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.arturmaslov.lumic.ui.theme.LumicTheme
+import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
+import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_MAX
+import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_MIN
+import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_STEPS
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_MAX
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_MIN
@@ -37,7 +40,9 @@ fun PreviewSettingsDialog() {
         SettingsDialog(
             onSettingsDismiss = {},
             onMicrophoneSliderValueSelected = {},
-            currentSensitivityThreshold = SENSITIVITY_THRESHOLD_INITIAL
+            currentSensitivityThreshold = SENSITIVITY_THRESHOLD_INITIAL,
+            onFlashDurationSliderValueSelected = {},
+            currentFlashDuration = FLASH_ON_DURATION_INITIAL.toFloat()
         )
     }
 }
@@ -46,7 +51,9 @@ fun PreviewSettingsDialog() {
 fun SettingsDialog(
     onSettingsDismiss: () -> Unit = {},
     onMicrophoneSliderValueSelected: (Float) -> Unit,
-    currentSensitivityThreshold: Float
+    currentSensitivityThreshold: Float,
+    onFlashDurationSliderValueSelected: (Float) -> Unit,
+    currentFlashDuration: Float
 ) {
 
     Dialog(
@@ -66,7 +73,7 @@ fun SettingsDialog(
                     style = MaterialTheme.typography.titleMedium
                 )
                 SliderItem(
-                    sliderTitle = "Microphone sensitivity",
+                    sliderTitle = "Microphone sensitivity (dB)",
                     onSliderValueSelected = { threshold ->
                         onMicrophoneSliderValueSelected(threshold) },
                     currentValue = currentSensitivityThreshold,
@@ -74,6 +81,17 @@ fun SettingsDialog(
                     maxValue = SENSITIVITY_THRESHOLD_MAX,
                     steps = SENSITIVITY_THRESHOLD_STEPS
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                SliderItem(
+                    sliderTitle = "Flash duration (ms)",
+                    onSliderValueSelected = { flashDuration ->
+                        onFlashDurationSliderValueSelected(flashDuration) },
+                    currentValue = currentFlashDuration,
+                    minValue = FLASH_ON_DURATION_MIN,
+                    maxValue = FLASH_ON_DURATION_MAX,
+                    steps = FLASH_ON_DURATION_STEPS
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = { onSettingsDismiss() },
                 ) {

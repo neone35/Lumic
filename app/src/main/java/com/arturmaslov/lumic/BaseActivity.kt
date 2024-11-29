@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import com.arturmaslov.lumic.cache.ColorSettingCache
+import com.arturmaslov.lumic.cache.FlashDurationSettingCache
 import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
@@ -53,6 +54,7 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
     val sensitivitySettingsCache by inject<SensitivitySettingCache>()
     val colorSettingsCache by inject<ColorSettingCache>()
     val flashSettingsCache by inject<FlashSettingCache>()
+    val flashDurationSettingsCache by inject<FlashDurationSettingCache>()
 
     override fun setListeners() {}
     override fun setObservers() {}

@@ -32,6 +32,7 @@ import com.arturmaslov.lumic.utils.AudioUtils
 import com.arturmaslov.lumic.utils.CameraUtils
 import com.arturmaslov.lumic.utils.Constants
 import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
+import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
@@ -97,6 +98,11 @@ class MainActivity : BaseActivity(), ActivityHelper {
             LaunchedEffect(key1 = true) {
                 baseFlashMode.value = flashSettingsCache.get() ?: FlashMode.BOTH
             }
+            var flashDuration by remember { mutableFloatStateOf(FLASH_ON_DURATION_INITIAL) }
+            LaunchedEffect(key1 = true) {
+                flashDuration =
+                    flashDurationSettingsCache.get() ?: FLASH_ON_DURATION_INITIAL
+            }
 
             LumicTheme {
                 Scaffold(
@@ -159,7 +165,14 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                                     baseFlashMode.value = FlashMode.BOTH
                                                 }
                                             }
-                                        }
+                                        },
+                                        onFlashDurationSliderValueSelected = { value ->
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                flashDurationSettingsCache.set(value)
+                                                flashDuration = value
+                                            }
+                                        },
+                                        currentFlashDuration = flashDuration
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {
