@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +65,7 @@ fun MainControl(
                     .fillMaxWidth()
                     .align(Alignment.Center),
                 imageVector = ImageVector.vectorResource(R.drawable.main_controls_shape),
-                contentDescription = "Main controls",
+                contentDescription = stringResource(R.string.main_controls),
                 tint = Color(bgTint.modifyColor(ColorMode.DARKER.value))
             )
             // center controls
@@ -78,7 +79,7 @@ fun MainControl(
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
                     iconVector = Icons.Filled.Settings,
-                    contentDescription = "Settings",
+                    contentDescription = stringResource(R.string.settings),
                     size = 50.dp,
                     colorMode = ColorMode.LIGHTER
                 )
@@ -86,7 +87,7 @@ fun MainControl(
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
                     iconVector = Icons.Filled.Settings,
-                    contentDescription = "Settings",
+                    contentDescription = stringResource(R.string.settings),
                     size = 50.dp,
                     colorMode = ColorMode.LIGHTER
                 )
@@ -110,7 +111,7 @@ fun MainControl(
                 }
             },
             iconVector = startStopIcon,
-            contentDescription = "Play/Stop",
+            contentDescription = stringResource(R.string.play_stop),
             size = 100.dp,
             colorMode = ColorMode.LIGHTER
         )
@@ -127,7 +128,7 @@ fun MainControl(
                     bgTint = bgTint,
                     onControlButtonClick = onColorPickerOpen,
                     iconVector = ImageVector.vectorResource(R.drawable.ic_palette),
-                    contentDescription = "Color picker",
+                    contentDescription = stringResource(R.string.color_picker),
                     size = 50.dp,
                     colorMode = ColorMode.LIGHTER
                 )

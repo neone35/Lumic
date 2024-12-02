@@ -27,7 +27,7 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
     val baseRequestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
 //            val permissionKeys = permissions.keys.map { it }
-            permissions.entries.forEachIndexed { index, entry ->
+            permissions.entries.forEach { entry ->
                 when (entry.key) {
                     Manifest.permission.CAMERA -> {
                         baseCameraPermissionStatus.value =

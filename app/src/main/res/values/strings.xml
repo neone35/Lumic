@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Lumic</string>
+    <string name="choose_color">Choose color</string>
+    <string name="main_controls">Main controls</string>
+    <string name="settings">Settings</string>
+    <string name="play_stop">Play/Stop</string>
+    <string name="color_picker">Color picker</string>
+    <string name="strobe_mode">Strobe mode</string>
+    <string name="both">Both</string>
+    <string name="flash">Flash</string>
+    <string name="screen">Screen</string>
+    <string name="info_icon">Info icon</string>
+    <string name="permissions_required">Permissions Required</string>
+    <string name="permissions_explanation">"To enable sound visualization, we need access to your camera and microphone. Without these permissions, the app cannot proceed."</string>
+    <string name="permissions_sensitivity_notice">This app contains flashing effects that may trigger seizures in photosensitive individuals. Use with caution.</string>
+    <string name="microphone_sensitivity_db">Microphone sensitivity (dB)</string>
+    <string name="flash_duration_ms">Flash duration (ms)</string>
+    <string name="close">Close</string>
 </resources>

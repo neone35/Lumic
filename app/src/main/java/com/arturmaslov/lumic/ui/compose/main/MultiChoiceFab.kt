@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,7 +62,7 @@ fun MultiChoiceFab(
                         FabOption(
                             bgColor,
                             iconColor,
-                            label = "Both",
+                            label = stringResource(R.string.both),
                             onClick = {
                                 onFlashModeSelected(FlashMode.BOTH)
                                 expanded = false
@@ -72,7 +73,7 @@ fun MultiChoiceFab(
                         FabOption(
                             bgColor,
                             iconColor,
-                            label = "Flash",
+                            label = stringResource(R.string.flash),
                             onClick = {
                                 onFlashModeSelected(FlashMode.FLASH)
                                 expanded = false
@@ -83,7 +84,7 @@ fun MultiChoiceFab(
                         FabOption(
                             bgColor,
                             iconColor,
-                            label = "Screen",
+                            label = stringResource(R.string.screen),
                             onClick = {
                                 onFlashModeSelected(FlashMode.SCREEN)
                                 expanded = false

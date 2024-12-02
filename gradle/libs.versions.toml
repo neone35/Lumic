@@ -4,7 +4,7 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [versions]
-agp = "8.7.2"
+agp = "8.7.3"
 firebaseBom = "33.6.0"
 firebaseCrashlytics = "19.2.1"
 firebasePerf = "21.0.2"

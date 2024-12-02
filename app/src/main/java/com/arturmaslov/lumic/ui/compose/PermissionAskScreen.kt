@@ -9,12 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.arturmaslov.lumic.MainActivity
+import com.arturmaslov.lumic.R
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.getAppName
 
@@ -61,11 +63,11 @@ fun PermissionAskScreen(
 //            }
 
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(1f))
             // Icon and explanation
             Icon(
                 painter = painterResource(id = android.R.drawable.ic_dialog_info),
-                contentDescription = "Info Icon",
+                contentDescription = stringResource(R.string.info_icon),
                 tint = Color.White,
                 modifier = Modifier.size(48.dp)
             )
@@ -73,14 +75,13 @@ fun PermissionAskScreen(
 
             // Explanation text
             Text(
-                text = "Permissions Required",
+                text = stringResource(R.string.permissions_required),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "To enable sound visualization, we need access to your camera and microphone. " +
-                        "Without these permissions, the app cannot proceed.",
+                text = stringResource(R.string.permissions_explanation),
                 fontSize = 16.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Center
@@ -93,11 +94,11 @@ fun PermissionAskScreen(
                 Text("Allow")
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = "This app contains flashing effects that may trigger seizures in photosensitive individuals. Use with caution.",
+                text = stringResource(R.string.permissions_sensitivity_notice),
                 textAlign = TextAlign.Center,
-                color = Color.Gray,
+                color = Color.LightGray,
                 fontSize = 12.sp
             )
         }

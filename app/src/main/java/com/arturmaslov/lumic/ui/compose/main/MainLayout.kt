@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -127,6 +128,17 @@ fun MainScreen(
         ) {
             val darkerColor = Color(bgColor.intValue.modifyColor(ColorMode.DARKER.value))
 
+            // top app name
+            Text(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp),
+                text = LocalContext.current.getAppName().lowercase(),
+                color = darkerColor,
+                fontSize = 26.sp
+            )
+
+            // center main control
             if (currentFlashMode != FlashMode.STROBE) {
                 MainControl(
                     modifier = Modifier.align(Alignment.Center),
@@ -138,15 +150,7 @@ fun MainScreen(
                 )
             }
 
-            Text(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 16.dp),
-                text = LocalContext.current.getAppName().lowercase(),
-                color = darkerColor,
-                fontSize = 26.sp
-            )
-
+            // bottom controls
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -172,7 +176,7 @@ fun MainScreen(
                     bgTint = bgColor.intValue,
                     onControlButtonClick = onStrobeModeChange,
                     iconVector = strobeIcon,
-                    contentDescription = "Strobe mode",
+                    contentDescription = stringResource(R.string.strobe_mode),
                     size = 50.dp
                 )
             }

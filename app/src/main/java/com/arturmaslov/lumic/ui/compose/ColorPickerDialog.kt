@@ -19,10 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.arturmaslov.lumic.R
 import com.arturmaslov.lumic.ui.theme.LumicTheme
+import com.arturmaslov.lumic.utils.toHex
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -50,13 +54,19 @@ fun ColorPickerDialog(
         }
     ) {
         Column(
-            modifier = Modifier.height(300.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
+            modifier = Modifier.height(350.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Choose colour",
+                text = stringResource(R.string.choose_color),
                 style = MaterialTheme.typography.titleSmall
+            )
+            Text(
+                text = Color(bgColor.value).toHex(),
+                style = MaterialTheme.typography.titleSmall,
+                textAlign = TextAlign.Center,
+                color = Color(bgColor.value)
             )
             val controller = remember { ColorPickerController() }
             HsvColorPicker(
@@ -68,7 +78,6 @@ fun ColorPickerDialog(
                     onColorSelected(colorEnvelope.color.toArgb())
                 }
             )
-
         }
     }
 }
