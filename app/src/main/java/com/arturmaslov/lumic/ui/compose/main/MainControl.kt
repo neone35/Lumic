@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -95,6 +96,7 @@ fun MainControl(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 ControlButton(
+                    modifier = Modifier.testTag("settings dialog"),
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
                     iconVector = Icons.Filled.Settings,
@@ -105,7 +107,7 @@ fun MainControl(
                 ControlButton(
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
-                    iconVector = ImageVector.vectorResource(R.drawable.ic_save),
+                    iconVector = Icons.Filled.Settings,
                     contentDescription = stringResource(R.string.settings),
                     size = 50.dp,
                     colorMode = ColorMode.LIGHTER
@@ -145,6 +147,7 @@ fun MainControl(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 ControlButton(
+                    modifier = Modifier.testTag("color picker"),
                     bgTint = bgTint,
                     onControlButtonClick = onColorPickerOpen,
                     iconVector = ImageVector.vectorResource(R.drawable.ic_palette),

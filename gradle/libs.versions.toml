@@ -19,7 +19,8 @@ composeBom = "2024.11.00"
 navigationCompose = "2.8.4"
 timber = "5.0.1"
 colorpicker = "1.1.2"
-koin-bom = "4.0.0"
+koinBom = "4.0.0"
+mockk = "1.13.13"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,5 +44,6 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 compose-colorpicker = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
-koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-android = { module = "io.insert-koin:koin-android" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
