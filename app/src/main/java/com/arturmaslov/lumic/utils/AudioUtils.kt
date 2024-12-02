@@ -59,9 +59,13 @@ class AudioUtils(private val context: Context) {
     private fun captureAmplitude() {
         amplitudeCaptureJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
-                val amplitude = mediaRecorder?.maxAmplitude ?: 0 // Fetch current amplitude
-                delay(Constants.AMPLITUDE_RECORD_INTERVAL_MS)
-                volumeData.add(amplitude)
+                try {
+                    val amplitude = mediaRecorder?.maxAmplitude ?: 0 // Fetch current amplitude
+                    delay(Constants.AMPLITUDE_RECORD_INTERVAL_MS)
+                    volumeData.add(amplitude)
+                } catch (e: IllegalStateException) {
+                    Timber.e(e)
+                }
             }
         }
     }

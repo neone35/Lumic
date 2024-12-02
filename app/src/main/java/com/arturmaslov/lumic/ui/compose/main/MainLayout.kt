@@ -26,6 +26,7 @@ import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
 import kotlinx.coroutines.delay
 import com.arturmaslov.lumic.ui.compose.ColorPickerDialog
+import com.arturmaslov.lumic.ui.compose.EnableFullScreen
 import com.arturmaslov.lumic.ui.compose.SettingsDialog
 import com.arturmaslov.lumic.utils.ColorMode
 import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL

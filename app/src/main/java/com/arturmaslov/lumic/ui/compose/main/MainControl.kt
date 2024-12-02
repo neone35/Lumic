@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -68,12 +70,29 @@ fun MainControl(
                 contentDescription = stringResource(R.string.main_controls),
                 tint = Color(bgTint.modifyColor(ColorMode.DARKER.value))
             )
-            // center controls
+            // top controls
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 4.dp)
+                    .align(Alignment.TopCenter),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                ControlButton(
+                    bgTint = bgTint,
+                    onControlButtonClick = onColorPickerOpen,
+                    iconVector = ImageVector.vectorResource(R.drawable.ic_palette),
+                    contentDescription = stringResource(R.string.color_picker),
+                    size = 50.dp,
+                    colorMode = ColorMode.LIGHTER
+                )
+            }
+            // center controls
+            Row(
+                modifier = Modifier
+                    .width(240.dp)
                     .align(Alignment.Center),
-                horizontalArrangement = Arrangement.SpaceAround,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 ControlButton(
                     bgTint = bgTint,
@@ -86,7 +105,7 @@ fun MainControl(
                 ControlButton(
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
-                    iconVector = Icons.Filled.Settings,
+                    iconVector = ImageVector.vectorResource(R.drawable.ic_save),
                     contentDescription = stringResource(R.string.settings),
                     size = 50.dp,
                     colorMode = ColorMode.LIGHTER
@@ -121,6 +140,7 @@ fun MainControl(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = 4.dp)
                     .align(Alignment.BottomCenter),
                 horizontalArrangement = Arrangement.Center,
             ) {

@@ -3,6 +3,7 @@ package com.arturmaslov.lumic
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.arturmaslov.lumic.ui.compose.EnableFullScreen
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
 import com.arturmaslov.lumic.ui.compose.main.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
@@ -116,6 +118,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                 startDestination = MAIN_SCREEN
                             ) {
                                 composable(MAIN_SCREEN) {
+                                    EnableFullScreen(window = window, enabled = true)
                                     MainScreen(
                                         modifier = Modifier
                                             .padding(innerPadding),
@@ -176,6 +179,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {
+                                    EnableFullScreen(window = window, enabled = false)
                                     PermissionAskScreen(
                                         cameraAllowed = cameraPermissionStatus.bool,
                                         audioRecordAllowed = audioRecordPermissionStatus.bool,
@@ -245,8 +249,8 @@ class MainActivity : BaseActivity(), ActivityHelper {
         baseRequestPermissionLauncher.launch(permissionArray)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         recordFlashJob?.cancel()
         audioUtils.stopRecording()
     }
