@@ -96,7 +96,7 @@ fun MainControl(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 ControlButton(
-                    modifier = Modifier.testTag("settings dialog"),
+                    modifier = Modifier.testTag(stringResource(R.string.settings)),
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
                     iconVector = Icons.Filled.Settings,
@@ -147,7 +147,7 @@ fun MainControl(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 ControlButton(
-                    modifier = Modifier.testTag("color picker"),
+                    modifier = Modifier.testTag(stringResource(R.string.color_picker)),
                     bgTint = bgTint,
                     onControlButtonClick = onColorPickerOpen,
                     iconVector = ImageVector.vectorResource(R.drawable.ic_palette),

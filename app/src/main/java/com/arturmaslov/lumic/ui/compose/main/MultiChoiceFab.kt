@@ -1,6 +1,7 @@
 package com.arturmaslov.lumic.ui.compose.main
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -49,9 +51,16 @@ fun MultiChoiceFab(
     }
     if (notNoneOrStrobe) {
         Box(
-            modifier,
-            contentAlignment = Alignment.BottomEnd
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomStart
         ) {
+            if (expanded) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { expanded = false } // Close when clicked outside
+                )
+            }
             Column(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -97,7 +106,9 @@ fun MultiChoiceFab(
                     onClick = { expanded = !expanded },
                     shape = CircleShape,
                     containerColor = bgColor,
-                    modifier = Modifier.size(56.dp)
+                    modifier = Modifier
+                        .size(56.dp)
+                        .testTag("MCF")
                 ) {
                     Icon(
                         currentIcon,
