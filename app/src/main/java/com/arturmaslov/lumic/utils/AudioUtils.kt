@@ -63,7 +63,7 @@ class AudioUtils(private val context: Context) {
                     val amplitude = mediaRecorder?.maxAmplitude ?: 0 // Fetch current amplitude
                     delay(Constants.AMPLITUDE_RECORD_INTERVAL_MS)
                     volumeData.add(amplitude)
-                } catch (e: IllegalStateException) {
+                } catch (e: Exception) {
                     Timber.e(e)
                 }
             }

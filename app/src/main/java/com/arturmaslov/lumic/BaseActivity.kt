@@ -3,14 +3,14 @@ package com.arturmaslov.lumic
 import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import com.arturmaslov.lumic.cache.ActiveUserSettingsCache
 import com.arturmaslov.lumic.cache.ColorSettingCache
 import com.arturmaslov.lumic.cache.FlashDurationSettingCache
 import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
-import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
+import com.arturmaslov.lumic.data.MainRepository
+import com.arturmaslov.lumic.data.UserSetting
 import com.arturmaslov.lumic.utils.ActivityHelper
-import com.arturmaslov.lumic.utils.AudioUtils
-import com.arturmaslov.lumic.utils.CameraUtils
 import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
@@ -50,11 +50,14 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
             }
         }
     val baseFlashMode = MutableStateFlow(FlashMode.BOTH)
+    val baseActiveSetting = MutableStateFlow(UserSetting())
 
     val sensitivitySettingsCache by inject<SensitivitySettingCache>()
     val colorSettingsCache by inject<ColorSettingCache>()
     val flashSettingsCache by inject<FlashSettingCache>()
     val flashDurationSettingsCache by inject<FlashDurationSettingCache>()
+    val activeUserSettingsCache by inject<ActiveUserSettingsCache>()
+    val mainRepository by inject<MainRepository>()
 
     override fun setListeners() {}
     override fun setObservers() {}

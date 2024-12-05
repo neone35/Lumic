@@ -82,6 +82,8 @@ fun MainControl(
                 ControlButton(
                     bgTint = bgTint,
                     onControlButtonClick = onColorPickerOpen,
+//                    iconVector = ImageVector.vectorResource(R.drawable.ic_account),
+//                    contentDescription = stringResource(R.string.user_selection),
                     iconVector = ImageVector.vectorResource(R.drawable.ic_palette),
                     contentDescription = stringResource(R.string.color_picker),
                     size = 50.dp,
@@ -99,6 +101,8 @@ fun MainControl(
                     modifier = Modifier.testTag(stringResource(R.string.settings)),
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
+//                    iconVector = ImageVector.vectorResource(R.drawable.ic_album),
+//                    contentDescription = stringResource(R.string.album_selection),
                     iconVector = Icons.Filled.Settings,
                     contentDescription = stringResource(R.string.settings),
                     size = 50.dp,

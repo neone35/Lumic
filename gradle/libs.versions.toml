@@ -22,6 +22,7 @@ timber = "5.0.1"
 colorpicker = "1.1.2"
 koinBom = "4.0.0"
 mockk = "1.13.13"
+room = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,3 +50,4 @@ koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-android = { module = "io.insert-koin:koin-android" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-test" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }

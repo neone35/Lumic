@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.arturmaslov.lumic.di.appModule
 import com.arturmaslov.lumic.di.cacheModule
+import com.arturmaslov.lumic.di.repoModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -27,7 +28,8 @@ class App: Application() {
             modules(
                 listOf(
                     cacheModule,
-                    appModule
+                    appModule,
+                    repoModule
                 )
             )
         }

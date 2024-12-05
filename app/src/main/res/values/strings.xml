@@ -16,4 +16,5 @@
     <string name="microphone_sensitivity_db">Microphone sensitivity (dB)</string>
     <string name="flash_duration_ms">Flash duration (ms)</string>
     <string name="close">Close</string>
+    <string name="user_selection">user selection</string>
 </resources>

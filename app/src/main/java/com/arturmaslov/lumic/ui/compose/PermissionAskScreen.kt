@@ -62,8 +62,8 @@ fun PermissionAskScreen(
 //                Text(text = "Audio permission denied", color = Color.Red, fontWeight = FontWeight.Bold)
 //            }
 
-
             Spacer(modifier = Modifier.weight(1f))
+
             // Icon and explanation
             Icon(
                 painter = painterResource(id = android.R.drawable.ic_dialog_info),
@@ -95,6 +95,7 @@ fun PermissionAskScreen(
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
             Text(
                 text = stringResource(R.string.permissions_sensitivity_notice),
                 textAlign = TextAlign.Center,

@@ -1,6 +1,8 @@
 package com.arturmaslov.lumic.di
 
 import android.content.Context
+import com.arturmaslov.lumic.cache.ActiveSettingsCacheImpl
+import com.arturmaslov.lumic.cache.ActiveUserSettingsCache
 import com.arturmaslov.lumic.cache.ColorSettingCache
 import com.arturmaslov.lumic.cache.ColorSettingCacheImpl
 import com.arturmaslov.lumic.cache.FlashDurationSettingCache
@@ -9,7 +11,6 @@ import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.cache.FlashSettingCacheImpl
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
-import com.arturmaslov.lumic.utils.CameraUtils
 import com.arturmaslov.lumic.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
@@ -48,6 +49,13 @@ val cacheModule = module {
 
     single<FlashDurationSettingCache> {
         FlashDurationSettingCacheImpl(
+            dispatcher = Dispatchers.IO,
+            sharedPreferences = get(named(Constants.PREFS_DEFAULT))
+        )
+    }
+
+    single<ActiveUserSettingsCache> {
+        ActiveSettingsCacheImpl(
             dispatcher = Dispatchers.IO,
             sharedPreferences = get(named(Constants.PREFS_DEFAULT))
         )

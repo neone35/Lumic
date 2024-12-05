@@ -3,7 +3,6 @@ package com.arturmaslov.lumic
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -85,25 +84,48 @@ class MainActivity : BaseActivity(), ActivityHelper {
             val hasFlash = cameraUtils.hasFlash().collectAsState().value
             val loadStatusState = loadStatus().collectAsState().value
 
+            // get currently active settings
+            var currentActiveUser by remember { mutableStateOf(Constants.EMPTY_STRING) }
+            var currentActiveSettingId by remember { mutableIntStateOf(0) }
+            LaunchedEffect(true) {
+                currentActiveUser = activeUserSettingsCache.get()?.first ?: Constants.EMPTY_STRING
+                currentActiveSettingId = activeUserSettingsCache.get()?.second ?: 0
+
+                val activeUserIsSet = currentActiveUser.isNotEmpty()
+                val activeSettingIdIsSet = currentActiveSettingId != 0
+                if (activeUserIsSet && activeSettingIdIsSet) {
+                    val oneUserSettings = mainRepository.getOneUserSettings(currentActiveUser)
+                    val oneSetting = oneUserSettings?.find { it.id == currentActiveSettingId }
+                    if (oneSetting != null) {
+                        baseActiveSetting.value = oneSetting
+                    }
+                }
+            }
+            val activeColor = baseActiveSetting.collectAsState().value.colorSetting
+            val activeFlashDuration = baseActiveSetting.collectAsState().value.flashDuration
+            val activeFlashMode = baseActiveSetting.collectAsState().value.flashMode
+            val activeSensitivity = baseActiveSetting.collectAsState().value.sensitivity
+
+            // load active settings and hold live changes in state memory
             var isColorPickerDialogVisible by remember { mutableStateOf(false) }
             var colorSetting by remember { mutableIntStateOf(COLOR_INITIAL) }
-            LaunchedEffect(key1 = true) {
-                colorSetting = colorSettingsCache.get() ?: COLOR_INITIAL
+            LaunchedEffect(true) {
+                colorSetting = activeColor ?: colorSettingsCache.get() ?: COLOR_INITIAL
             }
             var isSettingsDialogVisible by remember { mutableStateOf(false) }
             var sensitivityThreshold by remember { mutableFloatStateOf(SENSITIVITY_THRESHOLD_INITIAL) }
-            LaunchedEffect(key1 = true) {
+            LaunchedEffect(true) {
                 sensitivityThreshold =
-                    sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
+                    activeSensitivity ?: sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
             }
             var flashMode = baseFlashMode.collectAsState().value
-            LaunchedEffect(key1 = true) {
-                baseFlashMode.value = flashSettingsCache.get() ?: FlashMode.BOTH
+            LaunchedEffect(true) {
+                baseFlashMode.value = activeFlashMode ?: flashSettingsCache.get() ?: FlashMode.BOTH
             }
             var flashDuration by remember { mutableFloatStateOf(FLASH_ON_DURATION_INITIAL) }
-            LaunchedEffect(key1 = true) {
+            LaunchedEffect(true) {
                 flashDuration =
-                    flashDurationSettingsCache.get() ?: FLASH_ON_DURATION_INITIAL
+                    activeFlashDuration ?: flashDurationSettingsCache.get() ?: FLASH_ON_DURATION_INITIAL
             }
 
             LumicTheme {
