@@ -17,4 +17,5 @@
     <string name="flash_duration_ms">Flash duration (ms)</string>
     <string name="close">Close</string>
     <string name="user_selection">user selection</string>
+    <string name="lock_or_unlock">Lock or unlock</string>
 </resources>

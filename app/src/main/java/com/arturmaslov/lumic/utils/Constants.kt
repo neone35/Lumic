@@ -12,9 +12,9 @@ object Constants {
     const val STROBE_ON_DURATION = 1000L
 
     const val SENSITIVITY_THRESHOLD_INITIAL: Float = 400f;
-    const val SENSITIVITY_THRESHOLD_STEPS: Int = 30;
+    const val SENSITIVITY_THRESHOLD_STEPS: Int = 20;
     const val SENSITIVITY_THRESHOLD_MIN: Float = 100f;
-    const val SENSITIVITY_THRESHOLD_MAX: Float = 3000f;
+    const val SENSITIVITY_THRESHOLD_MAX: Float = 2000f;
     const val COLOR_INITIAL: Int = 0xFF444444.toInt() //Color.DarkGray.value
     const val FLASH_MODE_INITIAL: String = "both"
 

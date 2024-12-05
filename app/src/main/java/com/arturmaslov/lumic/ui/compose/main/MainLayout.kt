@@ -1,7 +1,9 @@
 package com.arturmaslov.lumic.ui.compose.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,12 +11,16 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -26,8 +32,9 @@ import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
 import kotlinx.coroutines.delay
 import com.arturmaslov.lumic.ui.compose.ColorPickerDialog
-import com.arturmaslov.lumic.ui.compose.EnableFullScreen
+import com.arturmaslov.lumic.ui.compose.effects.ToggleFullScreen
 import com.arturmaslov.lumic.ui.compose.SettingsDialog
+import com.arturmaslov.lumic.ui.compose.effects.ToggleScreenBrightness
 import com.arturmaslov.lumic.utils.ColorMode
 import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
@@ -59,7 +66,8 @@ fun PreviewMainScreen() {
             currentFlashMode = FlashMode.BOTH,
             onStrobeModeChange = { },
             onFlashDurationSliderValueSelected = { },
-            currentFlashDuration = FLASH_ON_DURATION_INITIAL.toFloat()
+            currentFlashDuration = FLASH_ON_DURATION_INITIAL.toFloat(),
+            callingWindow = null
         )
     }
 }
@@ -87,9 +95,11 @@ fun MainScreen(
     currentFlashMode: FlashMode,
     onStrobeModeChange: () -> Unit = {},
     onFlashDurationSliderValueSelected: (Float) -> Unit,
-    currentFlashDuration: Float
+    currentFlashDuration: Float,
+    callingWindow: android.view.Window?
 ) {
     val bgColor = remember { mutableIntStateOf(currentColorSetting) }
+    var locked by remember { mutableStateOf(false) } // State to lock (no touch / fullscreen)
 
     val bothOrScreenFlashMode = when (currentFlashMode) {
         FlashMode.SCREEN -> true
@@ -115,6 +125,16 @@ fun MainScreen(
         }
     }
 
+    callingWindow?.let {
+        if (locked) {
+            ToggleFullScreen(window = callingWindow, enabled = true)
+            ToggleScreenBrightness(window = callingWindow, isMaxBrightness = true)
+        } else {
+            ToggleFullScreen(window = callingWindow, enabled = false)
+            ToggleScreenBrightness(window = callingWindow, isMaxBrightness = false)
+        }
+    }
+
     if (cameraAllowed && audioRecordAllowed) {
         val finalColor = if (!bothOrScreenFlashMode) {
             bgColor.intValue = COLOR_INITIAL
@@ -129,15 +149,36 @@ fun MainScreen(
         ) {
             val darkerColor = Color(bgColor.intValue.modifyColor(ColorMode.DARKER.value))
 
-            // top app name
-            Text(
+            // top UI with name and lock/unlock below
+            Column(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 16.dp),
-                text = LocalContext.current.getAppName().lowercase(),
-                color = darkerColor,
-                fontSize = 26.sp
-            )
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = LocalContext.current.getAppName().lowercase(),
+                    color = darkerColor,
+                    fontSize = 26.sp
+                )
+                // top end lock switch
+                val lockIcon = if (locked) {
+                    ImageVector.vectorResource(R.drawable.ic_lock_open)
+                } else {
+                    ImageVector.vectorResource(R.drawable.ic_lock)
+                }
+                ControlButton(
+                    modifier = Modifier
+                        .padding(top = 16.dp),
+                    bgTint = bgColor.intValue,
+                    onControlButtonClick = { locked = !locked },
+                    iconVector = lockIcon,
+                    contentDescription = stringResource(R.string.lock_or_unlock),
+                    size = 50.dp
+                )
+            }
+
 
             // center main control
             if (currentFlashMode != FlashMode.STROBE) {
@@ -152,35 +193,21 @@ fun MainScreen(
             }
 
             // bottom controls
-            Box(
+            BottomControls(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
                     .align(Alignment.BottomCenter)
-                    .wrapContentHeight()
-            ) {
-                MultiChoiceFab(
-                    modifier = Modifier.align(Alignment.BottomStart),
-                    bgColor = darkerColor,
-                    iconColor = Color(bgColor.intValue),
-                    onFlashModeSelected = onFlashModeSelected,
-                    currentFlashMode = currentFlashMode,
-                    hasFlash = hasFlash
-                )
-                val strobeIcon = if (currentFlashMode == FlashMode.STROBE) {
-                    ImageVector.vectorResource(R.drawable.ic_strobe_on)
-                } else {
-                    ImageVector.vectorResource(R.drawable.ic_strobe_off)
-                }
-                ControlButton(
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    bgTint = bgColor.intValue,
-                    onControlButtonClick = onStrobeModeChange,
-                    iconVector = strobeIcon,
-                    contentDescription = stringResource(R.string.strobe_mode),
-                    size = 50.dp
-                )
-            }
+                    .wrapContentHeight(),
+                multiChoiceColor = darkerColor,
+                iconColor = bgColor.intValue,
+                onFlashModeSelected = onFlashModeSelected,
+                currentFlashMode = currentFlashMode,
+                onStrobeModeChange = onStrobeModeChange,
+                hasFlash = hasFlash
+            )
+
+            LockedOverlay(locked)
 
         }
         if (isColorPickerDialogVisible) {
@@ -201,5 +228,62 @@ fun MainScreen(
         }
     } else {
         navToPermissionScreen()
+    }
+}
+
+@Composable
+fun BottomControls(
+    modifier: Modifier = Modifier,
+    multiChoiceColor: Color,
+    iconColor: Int,
+    onFlashModeSelected: (FlashMode) -> Unit = {},
+    currentFlashMode: FlashMode = FlashMode.BOTH,
+    onStrobeModeChange: () -> Unit = {},
+    hasFlash: Boolean = true
+) {
+    Box(
+        modifier
+    ) {
+        MultiChoiceFab(
+            modifier = Modifier.align(Alignment.BottomStart),
+            bgColor = multiChoiceColor,
+            iconColor = Color(iconColor),
+            onFlashModeSelected = onFlashModeSelected,
+            currentFlashMode = currentFlashMode,
+            hasFlash = hasFlash
+        )
+        val strobeIcon = if (currentFlashMode == FlashMode.STROBE) {
+            ImageVector.vectorResource(R.drawable.ic_strobe_on)
+        } else {
+            ImageVector.vectorResource(R.drawable.ic_strobe_off)
+        }
+        ControlButton(
+            modifier = Modifier.align(Alignment.BottomEnd),
+            bgTint = iconColor,
+            onControlButtonClick = onStrobeModeChange,
+            iconVector = strobeIcon,
+            contentDescription = stringResource(R.string.strobe_mode),
+            size = 50.dp
+        )
+    }
+}
+
+@Composable
+fun LockedOverlay(
+    locked: Boolean
+) {
+    if (locked) {
+        Box(
+            modifier = Modifier
+                .padding(top = 100.dp) // make space for unlock to be touchable
+                .fillMaxSize()
+                .pointerInput(Unit) { // Intercept all touch gestures
+                    awaitPointerEventScope {
+                        while (true) {
+                            awaitPointerEvent() // Block all events
+                        }
+                    }
+                }
+        )
     }
 }

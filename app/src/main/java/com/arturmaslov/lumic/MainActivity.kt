@@ -22,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.arturmaslov.lumic.ui.compose.EnableFullScreen
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
 import com.arturmaslov.lumic.ui.compose.main.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
@@ -140,7 +139,6 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                 startDestination = MAIN_SCREEN
                             ) {
                                 composable(MAIN_SCREEN) {
-                                    EnableFullScreen(window = window, enabled = true)
                                     MainScreen(
                                         modifier = Modifier
                                             .padding(innerPadding),
@@ -197,11 +195,11 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                                 flashDuration = value
                                             }
                                         },
-                                        currentFlashDuration = flashDuration
+                                        currentFlashDuration = flashDuration,
+                                        callingWindow = window
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {
-                                    EnableFullScreen(window = window, enabled = false)
                                     PermissionAskScreen(
                                         cameraAllowed = cameraPermissionStatus.bool,
                                         audioRecordAllowed = audioRecordPermissionStatus.bool,

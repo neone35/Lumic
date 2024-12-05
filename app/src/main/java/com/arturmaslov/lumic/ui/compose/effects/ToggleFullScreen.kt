@@ -1,4 +1,4 @@
-package com.arturmaslov.lumic.ui.compose
+package com.arturmaslov.lumic.ui.compose.effects
 
 import android.os.Build
 import android.view.Window
@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 @Composable
-fun EnableFullScreen(window: Window, enabled: Boolean) {
+fun ToggleFullScreen(window: Window, enabled: Boolean) {
     LaunchedEffect(enabled) {
         if (enabled) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
