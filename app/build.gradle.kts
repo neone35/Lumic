@@ -92,6 +92,7 @@ dependencies {
 
     // database
     implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // test
     testImplementation(libs.junit)

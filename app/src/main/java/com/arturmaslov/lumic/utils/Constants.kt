@@ -18,6 +18,8 @@ object Constants {
     const val COLOR_INITIAL: Int = 0xFF444444.toInt() //Color.DarkGray.value
     const val FLASH_MODE_INITIAL: String = "both"
 
+    const val SETS_LIST_LENGTH = 8
+
     const val EMPTY_STRING: String = "";
     const val PREFS_DEFAULT = "prefs_default"
 

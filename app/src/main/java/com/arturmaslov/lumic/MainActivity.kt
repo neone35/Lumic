@@ -1,6 +1,8 @@
 package com.arturmaslov.lumic
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -22,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.arturmaslov.lumic.data.UserSetting
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
 import com.arturmaslov.lumic.ui.compose.main.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
@@ -67,8 +70,11 @@ class MainActivity : BaseActivity(), ActivityHelper {
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Lock to portrait mode
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         checkPermissions()
         setObservers()
@@ -84,45 +90,45 @@ class MainActivity : BaseActivity(), ActivityHelper {
             val loadStatusState = loadStatus().collectAsState().value
 
             // get currently active settings
-            var currentActiveUser by remember { mutableStateOf(Constants.EMPTY_STRING) }
-            var currentActiveSettingId by remember { mutableIntStateOf(0) }
-            LaunchedEffect(true) {
-                currentActiveUser = activeUserSettingsCache.get()?.first ?: Constants.EMPTY_STRING
-                currentActiveSettingId = activeUserSettingsCache.get()?.second ?: 0
+            var currentActiveUserId by remember { mutableIntStateOf(1) }
+            var currentActiveSettingId by remember { mutableIntStateOf(1) }
+            var currentActiveSettingSet by remember { mutableStateOf(UserSetting()) }
+            var allUserSettingSets by remember { mutableStateOf(listOf<UserSetting>()) }
+            LaunchedEffect(currentActiveSettingSet) {
+                currentActiveUserId = activeUserSettingsCache.get()?.first ?: 1
+                currentActiveSettingId = activeUserSettingsCache.get()?.second ?: 1
 
-                val activeUserIsSet = currentActiveUser.isNotEmpty()
+                val activeUserIsSet = currentActiveUserId != 0
                 val activeSettingIdIsSet = currentActiveSettingId != 0
                 if (activeUserIsSet && activeSettingIdIsSet) {
-                    val oneUserSettings = mainRepository.getOneUserSettings(currentActiveUser)
-                    val oneSetting = oneUserSettings?.find { it.id == currentActiveSettingId }
+                    allUserSettingSets = mainRepository.getOneUserSettings(currentActiveUserId) ?: emptyList()
+                    val oneSetting = allUserSettingSets.find { it.id == currentActiveSettingId }
                     if (oneSetting != null) {
-                        baseActiveSetting.value = oneSetting
+                        currentActiveSettingSet = oneSetting
                     }
                 }
             }
-            val activeColor = baseActiveSetting.collectAsState().value.colorSetting
-            val activeFlashDuration = baseActiveSetting.collectAsState().value.flashDuration
-            val activeFlashMode = baseActiveSetting.collectAsState().value.flashMode
-            val activeSensitivity = baseActiveSetting.collectAsState().value.sensitivity
+            val activeColor = currentActiveSettingSet.colorSetting
+            val activeFlashDuration = currentActiveSettingSet.flashDuration
+            val activeFlashMode = currentActiveSettingSet.flashMode
+            val activeSensitivity = currentActiveSettingSet.sensitivity
 
             // load active settings and hold live changes in state memory
-            var isColorPickerDialogVisible by remember { mutableStateOf(false) }
             var colorSetting by remember { mutableIntStateOf(COLOR_INITIAL) }
-            LaunchedEffect(true) {
+            LaunchedEffect(activeColor) {
                 colorSetting = activeColor ?: colorSettingsCache.get() ?: COLOR_INITIAL
             }
-            var isSettingsDialogVisible by remember { mutableStateOf(false) }
             var sensitivityThreshold by remember { mutableFloatStateOf(SENSITIVITY_THRESHOLD_INITIAL) }
-            LaunchedEffect(true) {
+            LaunchedEffect(activeSensitivity) {
                 sensitivityThreshold =
                     activeSensitivity ?: sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
             }
             var flashMode = baseFlashMode.collectAsState().value
-            LaunchedEffect(true) {
+            LaunchedEffect(activeFlashMode) {
                 baseFlashMode.value = activeFlashMode ?: flashSettingsCache.get() ?: FlashMode.BOTH
             }
             var flashDuration by remember { mutableFloatStateOf(FLASH_ON_DURATION_INITIAL) }
-            LaunchedEffect(true) {
+            LaunchedEffect(activeFlashDuration) {
                 flashDuration =
                     activeFlashDuration ?: flashDurationSettingsCache.get() ?: FLASH_ON_DURATION_INITIAL
             }
@@ -149,11 +155,6 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                         navToPermissionScreen = {
                                             navController.navigate(PERMISSION_SCREEN)
                                         },
-                                        isColorPickerDialogVisible = isColorPickerDialogVisible,
-                                        onColorPickerOpen = { isColorPickerDialogVisible = true },
-                                        onColorPickerDismiss = {
-                                            isColorPickerDialogVisible = false
-                                        },
                                         onColorSelected = { color ->
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 colorSettingsCache.set(color)
@@ -161,9 +162,6 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                             }
                                         },
                                         currentColorSetting = colorSetting,
-                                        isSettingsDialogVisible = isSettingsDialogVisible,
-                                        onSettingsOpen = { isSettingsDialogVisible = true },
-                                        onSettingsDismiss = { isSettingsDialogVisible = false },
                                         onMicrophoneSliderValueSelected = { value ->
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 sensitivitySettingsCache.set(value)
@@ -196,7 +194,34 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                             }
                                         },
                                         currentFlashDuration = flashDuration,
-                                        callingWindow = window
+                                        callingWindow = window,
+                                        onSetSaved = { userSettingId ->
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                val userSettingToInsert = UserSetting(
+                                                    id = userSettingId,
+                                                    userId = currentActiveUserId,
+                                                    colorSetting = colorSetting,
+                                                    flashDuration = flashDuration,
+                                                    flashMode = flashMode,
+                                                    sensitivity = sensitivityThreshold
+                                                )
+                                                mainRepository.insertUserSetting(userSettingToInsert)
+                                            }
+                                        },
+                                        onSetActivated = { userSettingId ->
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                val userSettingToActivate = mainRepository.getUserSetting(userSettingId)
+                                                activeUserSettingsCache.set(Pair(
+                                                    userSettingToActivate?.userId ?: currentActiveUserId,
+                                                    userSettingToActivate?.id ?: currentActiveSettingId
+                                                ))
+                                                currentActiveSettingSet = userSettingToActivate ?: UserSetting()
+                                                currentActiveSettingId = userSettingToActivate?.id ?: 0
+
+                                            }
+                                        },
+                                        allUserSettings = allUserSettingSets,
+                                        activeSetId = currentActiveSettingId
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {
@@ -270,9 +295,9 @@ class MainActivity : BaseActivity(), ActivityHelper {
     }
 
     override fun onStop() {
-        super.onStop()
         recordFlashJob?.cancel()
         audioUtils.stopRecording()
+        super.onStop()
     }
 
     companion object {

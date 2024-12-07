@@ -50,7 +50,6 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
             }
         }
     val baseFlashMode = MutableStateFlow(FlashMode.BOTH)
-    val baseActiveSetting = MutableStateFlow(UserSetting())
 
     val sensitivitySettingsCache by inject<SensitivitySettingCache>()
     val colorSettingsCache by inject<ColorSettingCache>()

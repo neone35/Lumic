@@ -120,7 +120,7 @@ fun SliderItem(
     var sensitivityThreshold by remember { mutableFloatStateOf(currentValue) }
     Text(
         text = sliderTitle,
-        style = MaterialTheme.typography.labelSmall
+        style = MaterialTheme.typography.titleSmall
     )
     Slider(
         value = sensitivityThreshold,
@@ -143,7 +143,7 @@ fun SliderItem(
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = sensitivityThreshold.toString(),
+            text = sensitivityThreshold.toInt().toString(),
             style = MaterialTheme.typography.labelSmall,
         )
         Spacer(modifier = Modifier.weight(1f))

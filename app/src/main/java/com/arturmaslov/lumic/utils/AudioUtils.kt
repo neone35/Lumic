@@ -47,7 +47,7 @@ class AudioUtils(private val context: Context) {
             try {
                 mediaRecorder?.prepare()
                 mediaRecorder?.start()
-            } catch (e: IllegalStateException) {
+            } catch (e: Exception) {
                 Timber.e(e)
             }
 
@@ -75,12 +75,16 @@ class AudioUtils(private val context: Context) {
             Timber.w("Recording is not in progress.")
             return
         } else {
-            amplitudeCaptureJob?.cancel()
-            mediaRecorder?.stop()
-            mediaRecorder?.release()
-            mediaRecorder = null
-            isRecording = false
-            deleteRecording()
+            try {
+                amplitudeCaptureJob?.cancel()
+                mediaRecorder?.stop()
+                mediaRecorder?.release()
+                mediaRecorder = null
+                isRecording = false
+                deleteRecording()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
     }
 

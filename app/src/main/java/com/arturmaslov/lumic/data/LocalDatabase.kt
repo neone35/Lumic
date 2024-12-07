@@ -29,8 +29,8 @@ interface UserSettingDao {
     @Query("SELECT * FROM userSettingEntity WHERE id = :id")
     fun getUserSetting(id: Int): UserSettingEntity
 
-    @Query("SELECT * FROM userSettingEntity WHERE userName = :userName")
-    fun getOneUserSettings(userName: String): List<UserSettingEntity>?
+    @Query("SELECT * FROM userSettingEntity WHERE userId = :userId")
+    fun getOneUserSettings(userId: Int): List<UserSettingEntity>?
 
     // returns row id of inserted item
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -41,7 +41,7 @@ interface UserSettingDao {
     fun deleteAllUserSettings(): Int
 
     // returns number of rows affected
-    @Query("DELETE FROM userSettingEntity WHERE userName = :userName")
-    fun deleteOneUserSettings(userName: String): Int
+    @Query("DELETE FROM userSettingEntity WHERE userId = :userId")
+    fun deleteOneUserSettings(userId: Int): Int
 
 }

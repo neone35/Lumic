@@ -37,15 +37,15 @@ class LocalDataSource(
             userSetting
         }
 
-    override suspend fun getOneUserSettings(userName: String) =
+    override suspend fun getOneUserSettings(userId: Int) =
         withContext(mDispatcher) {
             Timber.i("Running getOneUserSettings()")
-            val oneUserSettings = userSettingDao?.getOneUserSettings(userName)
+            val oneUserSettings = userSettingDao?.getOneUserSettings(userId)
             val userSettingList = oneUserSettings?.map { it.toDomainModel() }
             if (userSettingList != null) {
-                Timber.i("Success: user settings for $userName retrieved")
+                Timber.i("Success: user settings for userId $userId retrieved")
             } else {
-                Timber.i("Failure: unable to retrieve settings for $userName")
+                Timber.i("Failure: unable to retrieve settings for userId $userId")
             }
             userSettingList
         }
@@ -63,14 +63,14 @@ class LocalDataSource(
             deletedRows
         }
 
-    override suspend fun deleteOneUserSettings(userName: String): Int? =
+    override suspend fun deleteOneUserSettings(userId: Int): Int? =
         withContext(mDispatcher) {
             Timber.i("Running deleteOneUserSettings()")
-            val deletedRows = userSettingDao?.deleteOneUserSettings(userName)
+            val deletedRows = userSettingDao?.deleteOneUserSettings(userId)
             if (deletedRows != 0) {
-                Timber.i("Success: settings of user $userName deleted")
+                Timber.i("Success: settings of user userId $userId deleted")
             } else {
-                Timber.i("Failure: unable to delete settings of user $userName")
+                Timber.i("Failure: unable to delete settings of userId $userId")
             }
             deletedRows
         }
@@ -80,9 +80,9 @@ class LocalDataSource(
             Timber.i("Running insertUserSetting()")
             val insertedId = userSettingDao?.insertUserSetting(userSetting.toEntity())
             if (insertedId != null) {
-                Timber.i("Success: user setting for ${userSetting.userName} inserted")
+                Timber.i("Success: user setting for ${userSetting.userId} inserted")
             } else {
-                Timber.i("Failure: unable to insert setting for ${userSetting.userName}")
+                Timber.i("Failure: unable to insert setting for ${userSetting.userId}")
             }
             insertedId
         }
@@ -92,8 +92,8 @@ class LocalDataSource(
 interface LocalData {
     suspend fun getAllUsersSettings(): List<UserSetting>?
     suspend fun getUserSetting(id: Int): UserSetting?
-    suspend fun getOneUserSettings(userName: String): List<UserSetting>?
+    suspend fun getOneUserSettings(userId: Int): List<UserSetting>?
     suspend fun deleteAllUserSettings(): Int?
-    suspend fun deleteOneUserSettings(userName: String): Int?
+    suspend fun deleteOneUserSettings(userId: Int): Int?
     suspend fun insertUserSetting(userSetting: UserSetting): Long?
 }

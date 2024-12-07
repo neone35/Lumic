@@ -18,4 +18,8 @@
     <string name="close">Close</string>
     <string name="user_selection">user selection</string>
     <string name="lock_or_unlock">Lock or unlock</string>
+    <string name="check_uncheck">Check/Uncheck</string>
+    <string name="flash_mode_icon">flash mode icon</string>
+    <string name="set_selection">Set selection</string>
+    <string name="save_set">Save set</string>
 </resources>

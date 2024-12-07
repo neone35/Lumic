@@ -28,10 +28,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arturmaslov.lumic.R
+import com.arturmaslov.lumic.data.UserSetting
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
 import kotlinx.coroutines.delay
 import com.arturmaslov.lumic.ui.compose.ColorPickerDialog
+import com.arturmaslov.lumic.ui.compose.SetsDialog
 import com.arturmaslov.lumic.ui.compose.effects.ToggleFullScreen
 import com.arturmaslov.lumic.ui.compose.SettingsDialog
 import com.arturmaslov.lumic.ui.compose.effects.ToggleScreenBrightness
@@ -52,14 +54,8 @@ fun PreviewMainScreen() {
             audioRecordAllowed = true,
             hasFlash = true,
             timesFlashed = 0,
-            isColorPickerDialogVisible = false,
-            isSettingsDialogVisible = false,
-            onColorPickerOpen = { },
-            onColorPickerDismiss = { },
             onColorSelected = { },
             currentColorSetting = COLOR_INITIAL,
-            onSettingsOpen = { },
-            onSettingsDismiss = { },
             onMicrophoneSliderValueSelected = { },
             currentSensitivityThreshold = SENSITIVITY_THRESHOLD_INITIAL,
             onFlashModeSelected = { },
@@ -67,7 +63,11 @@ fun PreviewMainScreen() {
             onStrobeModeChange = { },
             onFlashDurationSliderValueSelected = { },
             currentFlashDuration = FLASH_ON_DURATION_INITIAL.toFloat(),
-            callingWindow = null
+            callingWindow = null,
+            onSetSaved = { },
+            onSetActivated = { },
+            allUserSettings = emptyList(),
+            activeSetId = 0
         )
     }
 }
@@ -80,15 +80,9 @@ fun MainScreen(
     audioRecordAllowed: Boolean,
     hasFlash: Boolean,
     timesFlashed: Int,
-    isColorPickerDialogVisible: Boolean,
     navToPermissionScreen: () -> Unit = {},
-    onColorPickerOpen: () -> Unit = {},
-    onColorPickerDismiss: () -> Unit = {},
     onColorSelected: (Int) -> Unit = {},
     currentColorSetting: Int,
-    isSettingsDialogVisible: Boolean,
-    onSettingsOpen: () -> Unit = {},
-    onSettingsDismiss: () -> Unit = {},
     onMicrophoneSliderValueSelected: (Float) -> Unit,
     currentSensitivityThreshold: Float,
     onFlashModeSelected: (FlashMode) -> Unit,
@@ -96,10 +90,18 @@ fun MainScreen(
     onStrobeModeChange: () -> Unit = {},
     onFlashDurationSliderValueSelected: (Float) -> Unit,
     currentFlashDuration: Float,
-    callingWindow: android.view.Window?
+    callingWindow: android.view.Window?,
+    onSetSaved: (Int) -> Unit,
+    onSetActivated: (Int) -> Unit,
+    allUserSettings: List<UserSetting>,
+    activeSetId: Int
 ) {
     val bgColor = remember { mutableIntStateOf(currentColorSetting) }
     var locked by remember { mutableStateOf(false) } // State to lock (no touch / fullscreen)
+
+    var isColorPickerDialogVisible by remember { mutableStateOf(false) }
+    var isSettingsDialogVisible by remember { mutableStateOf(false) }
+    var isSetsDialogVisible by remember { mutableStateOf(false) }
 
     val bothOrScreenFlashMode = when (currentFlashMode) {
         FlashMode.SCREEN -> true
@@ -124,7 +126,6 @@ fun MainScreen(
             bgColor.intValue = currentColorSetting
         }
     }
-
     callingWindow?.let {
         if (locked) {
             ToggleFullScreen(window = callingWindow, enabled = true)
@@ -185,8 +186,9 @@ fun MainScreen(
                 MainControl(
                     modifier = Modifier.align(Alignment.Center),
                     bgTint = bgColor.intValue,
-                    onColorPickerOpen = onColorPickerOpen,
-                    onSettingsOpen = onSettingsOpen,
+                    onColorPickerOpen = { isColorPickerDialogVisible = true },
+                    onSettingsOpen = { isSettingsDialogVisible = true },
+                    onSetsOpen = { isSetsDialogVisible = true },
                     currentFlashMode = currentFlashMode,
                     onFlashModeSelected = onFlashModeSelected
                 )
@@ -213,17 +215,26 @@ fun MainScreen(
         if (isColorPickerDialogVisible) {
             ColorPickerDialog(
                 bgColor = bgColor,
-                onColorPickerDismiss = onColorPickerDismiss,
+                onColorPickerDismiss = { isColorPickerDialogVisible = false },
                 onColorSelected = onColorSelected
             )
         }
         if (isSettingsDialogVisible) {
             SettingsDialog(
-                onSettingsDismiss = onSettingsDismiss,
+                onSettingsDismiss = { isSettingsDialogVisible = false },
                 onMicrophoneSliderValueSelected = onMicrophoneSliderValueSelected,
                 currentSensitivityThreshold = currentSensitivityThreshold,
                 onFlashDurationSliderValueSelected = onFlashDurationSliderValueSelected,
                 currentFlashDuration = currentFlashDuration
+            )
+        }
+        if (isSetsDialogVisible) {
+            SetsDialog(
+                onSetSaved = onSetSaved,
+                onSetActivated = onSetActivated,
+                onSetsDismiss = { isSetsDialogVisible = false },
+                allUserSettings = allUserSettings,
+                activeSetId = activeSetId
             )
         }
     } else {

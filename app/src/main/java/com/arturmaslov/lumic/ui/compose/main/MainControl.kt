@@ -36,6 +36,7 @@ fun PreviewMainControl() {
             bgTint = COLOR_INITIAL,
             onColorPickerOpen = { },
             onSettingsOpen = { },
+            onSetsOpen = { },
             currentFlashMode = FlashMode.BOTH,
             onFlashModeSelected = { }
         )
@@ -47,8 +48,9 @@ fun PreviewMainControl() {
 fun MainControl(
     modifier: Modifier,
     bgTint: Int,
-    onColorPickerOpen: () -> Unit = {},
-    onSettingsOpen: () -> Unit = {},
+    onColorPickerOpen: () -> Unit,
+    onSettingsOpen: () -> Unit,
+    onSetsOpen: () -> Unit,
     currentFlashMode: FlashMode,
     onFlashModeSelected: (FlashMode) -> Unit,
 ) {
@@ -101,8 +103,6 @@ fun MainControl(
                     modifier = Modifier.testTag(stringResource(R.string.settings)),
                     bgTint = bgTint,
                     onControlButtonClick = onSettingsOpen,
-//                    iconVector = ImageVector.vectorResource(R.drawable.ic_album),
-//                    contentDescription = stringResource(R.string.album_selection),
                     iconVector = Icons.Filled.Settings,
                     contentDescription = stringResource(R.string.settings),
                     size = 50.dp,
@@ -110,9 +110,9 @@ fun MainControl(
                 )
                 ControlButton(
                     bgTint = bgTint,
-                    onControlButtonClick = onSettingsOpen,
-                    iconVector = Icons.Filled.Settings,
-                    contentDescription = stringResource(R.string.settings),
+                    onControlButtonClick = onSetsOpen,
+                    iconVector = ImageVector.vectorResource(R.drawable.ic_album),
+                    contentDescription = stringResource(R.string.set_selection),
                     size = 50.dp,
                     colorMode = ColorMode.LIGHTER
                 )

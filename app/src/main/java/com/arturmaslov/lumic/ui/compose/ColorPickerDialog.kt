@@ -64,7 +64,7 @@ fun ColorPickerDialog(
             )
             Text(
                 text = Color(bgColor.value).toHex(),
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
                 color = Color(bgColor.value)
             )
