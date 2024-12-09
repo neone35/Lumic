@@ -9,28 +9,33 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
+    background = Color.Black,  // Set background to black
+    surface = Color.Black,     // Set surface to black
+    onPrimary = Color.White,   // Ensure text/icons on primary color are white
+    onSecondary = Color.White, // Ensure text/icons on secondary color are white
+    onTertiary = Color.White,  // Ensure text/icons on tertiary color are white
+    onBackground = Color.White, // Text/icons on background should be white for visibility
+    onSurface = Color.White     // Text/icons on surface should be white for visibility
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    tertiary = Pink40,
+    background = Color.Black,  // Set background to black
+    surface = Color.Black,     // Set surface to black
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onBackground = Color.White, // Text/icons on background should be white
+    onSurface = Color.White     // Text/icons on surface should be white
 )
 
 @Composable

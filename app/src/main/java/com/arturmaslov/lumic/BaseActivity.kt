@@ -7,6 +7,7 @@ import com.arturmaslov.lumic.cache.ActiveUserSettingsCache
 import com.arturmaslov.lumic.cache.ColorSettingCache
 import com.arturmaslov.lumic.cache.FlashDurationSettingCache
 import com.arturmaslov.lumic.cache.FlashSettingCache
+import com.arturmaslov.lumic.cache.OnBoardCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.data.MainRepository
 import com.arturmaslov.lumic.data.UserSetting
@@ -56,6 +57,8 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
     val flashSettingsCache by inject<FlashSettingCache>()
     val flashDurationSettingsCache by inject<FlashDurationSettingCache>()
     val activeUserSettingsCache by inject<ActiveUserSettingsCache>()
+    val onBoardCache by inject<OnBoardCache>()
+
     val mainRepository by inject<MainRepository>()
 
     override fun setListeners() {}

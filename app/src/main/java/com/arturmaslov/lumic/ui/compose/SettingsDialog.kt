@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -76,7 +77,7 @@ fun SettingsDialog(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 SliderItem(
-                    sliderTitle = stringResource(R.string.microphone_sensitivity_db),
+                    sliderTitle = stringResource(R.string.microphone_senses_from),
                     onSliderValueSelected = { threshold ->
                         onMicrophoneSliderValueSelected(threshold) },
                     currentValue = currentSensitivityThreshold,
@@ -145,6 +146,7 @@ fun SliderItem(
         Text(
             text = sensitivityThreshold.toInt().toString(),
             style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(

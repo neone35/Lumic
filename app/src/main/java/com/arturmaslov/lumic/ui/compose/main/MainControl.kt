@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.R
 import com.arturmaslov.lumic.utils.ColorMode
-import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
+import com.arturmaslov.lumic.utils.Constants.COLOR_OFF
 import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.utils.modifyColor
 import kotlin.Int
@@ -33,7 +33,7 @@ fun PreviewMainControl() {
     LumicTheme {
         MainControl(
             modifier = Modifier,
-            bgTint = COLOR_INITIAL,
+            bgTint = COLOR_OFF,
             onColorPickerOpen = { },
             onSettingsOpen = { },
             onSetsOpen = { },

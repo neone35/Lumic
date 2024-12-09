@@ -28,13 +28,14 @@ import com.arturmaslov.lumic.data.UserSetting
 import com.arturmaslov.lumic.ui.compose.LoadingScreen
 import com.arturmaslov.lumic.ui.compose.main.MainScreen
 import com.arturmaslov.lumic.ui.compose.PermissionAskScreen
+import com.arturmaslov.lumic.ui.compose.onboarding.OnBoarding
 import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.ui.theme.LumicTheme
 import com.arturmaslov.lumic.utils.ActivityHelper
 import com.arturmaslov.lumic.utils.AudioUtils
 import com.arturmaslov.lumic.utils.CameraUtils
 import com.arturmaslov.lumic.utils.Constants
-import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
+import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL_ONBOARD
 import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.LoadStatus
@@ -114,9 +115,9 @@ class MainActivity : BaseActivity(), ActivityHelper {
             val activeSensitivity = currentActiveSettingSet.sensitivity
 
             // load active settings and hold live changes in state memory
-            var colorSetting by remember { mutableIntStateOf(COLOR_INITIAL) }
+            var colorSetting by remember { mutableIntStateOf(COLOR_INITIAL_ONBOARD) }
             LaunchedEffect(activeColor) {
-                colorSetting = activeColor ?: colorSettingsCache.get() ?: COLOR_INITIAL
+                colorSetting = activeColor ?: colorSettingsCache.get() ?: COLOR_INITIAL_ONBOARD
             }
             var sensitivityThreshold by remember { mutableFloatStateOf(SENSITIVITY_THRESHOLD_INITIAL) }
             LaunchedEffect(activeSensitivity) {
@@ -132,6 +133,10 @@ class MainActivity : BaseActivity(), ActivityHelper {
                 flashDuration =
                     activeFlashDuration ?: flashDurationSettingsCache.get() ?: FLASH_ON_DURATION_INITIAL
             }
+            var onBoardComplete by remember { mutableStateOf(false) }
+            LaunchedEffect(true) {
+                onBoardComplete = onBoardCache.get() == true
+            }
 
             LumicTheme {
                 Scaffold(
@@ -145,6 +150,15 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                 startDestination = MAIN_SCREEN
                             ) {
                                 composable(MAIN_SCREEN) {
+                                    if (!onBoardComplete)
+                                        OnBoarding(
+                                            onComplete = {
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    onBoardCache.set(true)
+                                                    onBoardComplete = true
+                                                }
+                                            }
+                                        )
                                     MainScreen(
                                         modifier = Modifier
                                             .padding(innerPadding),
@@ -294,10 +308,10 @@ class MainActivity : BaseActivity(), ActivityHelper {
         baseRequestPermissionLauncher.launch(permissionArray)
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
         recordFlashJob?.cancel()
         audioUtils.stopRecording()
-        super.onStop()
+        super.onDestroy()
     }
 
     companion object {

@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,7 +67,8 @@ fun ColorPickerDialog(
                 text = Color(bgColor.value).toHex(),
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
-                color = Color(bgColor.value)
+                color = Color(bgColor.value),
+                fontWeight = FontWeight.Bold
             )
             val controller = remember { ColorPickerController() }
             HsvColorPicker(

@@ -9,6 +9,8 @@ import com.arturmaslov.lumic.cache.FlashDurationSettingCache
 import com.arturmaslov.lumic.cache.FlashDurationSettingCacheImpl
 import com.arturmaslov.lumic.cache.FlashSettingCache
 import com.arturmaslov.lumic.cache.FlashSettingCacheImpl
+import com.arturmaslov.lumic.cache.OnBoardCache
+import com.arturmaslov.lumic.cache.OnBoardCacheImpl
 import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.cache.SensitivitySettingCacheImpl
 import com.arturmaslov.lumic.utils.Constants
@@ -56,6 +58,13 @@ val cacheModule = module {
 
     single<ActiveUserSettingsCache> {
         ActiveSettingsCacheImpl(
+            dispatcher = Dispatchers.IO,
+            sharedPreferences = get(named(Constants.PREFS_DEFAULT))
+        )
+    }
+
+    single<OnBoardCache> {
+        OnBoardCacheImpl(
             dispatcher = Dispatchers.IO,
             sharedPreferences = get(named(Constants.PREFS_DEFAULT))
         )

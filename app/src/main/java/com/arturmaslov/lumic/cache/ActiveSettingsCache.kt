@@ -2,8 +2,6 @@ package com.arturmaslov.lumic.cache
 
 import android.content.SharedPreferences
 import com.arturmaslov.lumic.utils.Cache
-import com.arturmaslov.lumic.utils.Constants
-import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
 import kotlinx.coroutines.CoroutineDispatcher
 
 abstract class ActiveUserSettingsCache(dispatcher: CoroutineDispatcher) :

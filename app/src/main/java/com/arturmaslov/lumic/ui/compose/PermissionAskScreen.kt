@@ -1,15 +1,18 @@
 package com.arturmaslov.lumic.ui.compose
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -66,10 +69,10 @@ fun PermissionAskScreen(
 
             // Icon and explanation
             Icon(
-                painter = painterResource(id = android.R.drawable.ic_dialog_info),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_lumic_logo),
                 contentDescription = stringResource(R.string.info_icon),
-                tint = Color.White,
-                modifier = Modifier.size(48.dp)
+                tint = Color.Unspecified,
+                modifier = Modifier.size(60.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -99,7 +102,7 @@ fun PermissionAskScreen(
             Text(
                 text = stringResource(R.string.permissions_sensitivity_notice),
                 textAlign = TextAlign.Center,
-                color = Color.LightGray,
+                color = Color.Magenta,
                 fontSize = 12.sp
             )
         }

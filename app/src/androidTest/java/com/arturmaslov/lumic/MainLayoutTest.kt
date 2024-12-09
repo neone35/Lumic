@@ -38,7 +38,10 @@ class MainLayoutTest {
                     modifier = Modifier,
                     bgTint = Color.Magenta.toArgb(),
                     currentFlashMode = FlashMode.BOTH,
-                    onFlashModeSelected = {}
+                    onFlashModeSelected = {},
+                    onColorPickerOpen = {},
+                    onSetsOpen = {},
+                    onSettingsOpen = {}
                 )
             }
         }

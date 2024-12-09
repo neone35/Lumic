@@ -38,7 +38,7 @@ import com.arturmaslov.lumic.ui.compose.effects.ToggleFullScreen
 import com.arturmaslov.lumic.ui.compose.SettingsDialog
 import com.arturmaslov.lumic.ui.compose.effects.ToggleScreenBrightness
 import com.arturmaslov.lumic.utils.ColorMode
-import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL
+import com.arturmaslov.lumic.utils.Constants.COLOR_OFF
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.utils.getAppName
@@ -55,7 +55,7 @@ fun PreviewMainScreen() {
             hasFlash = true,
             timesFlashed = 0,
             onColorSelected = { },
-            currentColorSetting = COLOR_INITIAL,
+            currentColorSetting = COLOR_OFF,
             onMicrophoneSliderValueSelected = { },
             currentSensitivityThreshold = SENSITIVITY_THRESHOLD_INITIAL,
             onFlashModeSelected = { },
@@ -112,7 +112,7 @@ fun MainScreen(
         if (bothOrScreenFlashMode) {
             val tempColor = currentColorSetting
             if (timesFlashed > 0) {
-                bgColor.intValue = COLOR_INITIAL
+                bgColor.intValue = COLOR_OFF
                 delay(currentFlashDuration.toLong())
                 bgColor.intValue = tempColor
             }
@@ -138,8 +138,8 @@ fun MainScreen(
 
     if (cameraAllowed && audioRecordAllowed) {
         val finalColor = if (!bothOrScreenFlashMode) {
-            bgColor.intValue = COLOR_INITIAL
-            Color(COLOR_INITIAL)
+            bgColor.intValue = COLOR_OFF
+            Color(COLOR_OFF)
         } else {
             Color(bgColor.intValue)
         }

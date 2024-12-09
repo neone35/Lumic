@@ -11,9 +11,9 @@
     <string name="screen">Screen</string>
     <string name="info_icon">Info icon</string>
     <string name="permissions_required">Permissions Required</string>
-    <string name="permissions_explanation">"To enable sound visualization, we need access to your camera and microphone. Without these permissions, the app cannot proceed."</string>
+    <string name="permissions_explanation">"To enable sound visualization, we need access to your camera and microphone. Without these permissions, the app cannot function properly."</string>
     <string name="permissions_sensitivity_notice">This app contains flashing effects that may trigger seizures in photosensitive individuals. Use with caution.</string>
-    <string name="microphone_sensitivity_db">Microphone sensitivity (dB)</string>
+    <string name="microphone_senses_from">Microphone senses from (db)</string>
     <string name="flash_duration_ms">Flash duration (ms)</string>
     <string name="close">Close</string>
     <string name="user_selection">user selection</string>

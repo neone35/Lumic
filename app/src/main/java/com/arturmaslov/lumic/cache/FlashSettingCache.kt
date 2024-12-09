@@ -2,7 +2,6 @@ package com.arturmaslov.lumic.cache
 
 import android.content.SharedPreferences
 import com.arturmaslov.lumic.utils.Cache
-import com.arturmaslov.lumic.utils.Constants.FLASH_MODE_INITIAL
 import com.arturmaslov.lumic.utils.FlashMode
 import kotlinx.coroutines.CoroutineDispatcher
 
@@ -55,6 +54,7 @@ class FlashSettingCacheImpl(
 
     companion object {
         const val FLASH_SETTING_KEY = "flash_setting"
+        val FLASH_MODE_INITIAL: String = FlashMode.BOTH.string
     }
 
 }

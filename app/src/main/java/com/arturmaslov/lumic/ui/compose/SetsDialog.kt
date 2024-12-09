@@ -226,7 +226,8 @@ fun SetCard(
             iconVector = flashModeIcon,
             contentDescription = stringResource(R.string.flash_mode_icon),
             size = 50.dp,
-            rippleEnabled = false
+            rippleEnabled = false,
+            colorMode = colorModeOfChecked
         )
         // sensitivity of the set
         Text(
