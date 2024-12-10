@@ -47,12 +47,13 @@ class CameraUtils(
 
             val dataNotEmpty = dataSnapshot.isNotEmpty()
             val highAmplitude = dataSnapshot.any { it > currentSensitivityThreshold }
+            val hasFlash = hasFlash.value
             val bothOrFlashMode = when (currentFlashMode) {
-                FlashMode.BOTH -> true
-                FlashMode.FLASH -> true
+                FlashMode.BOTH  -> true && hasFlash
+                FlashMode.FLASH -> true && hasFlash
                 else -> false
             }
-            val strobeFlashMode = currentFlashMode == FlashMode.STROBE
+            val strobeFlashMode = currentFlashMode == FlashMode.STROBE && hasFlash
 
             if (strobeFlashMode) {
                 cameraManager.setTorchMode(cameraId, true) // Turn on
@@ -64,6 +65,7 @@ class CameraUtils(
                 if (bothOrFlashMode) delay(currentFlashDuration.toLong())
                 if (bothOrFlashMode) cameraManager.setTorchMode(cameraId, false) // Turn off
             }
+
         }
     }
 

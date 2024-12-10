@@ -12,11 +12,11 @@ object Constants {
     const val STROBE_ON_DURATION = 1000L
 
     const val SENSITIVITY_THRESHOLD_INITIAL: Float = 500f;
-    const val SENSITIVITY_THRESHOLD_STEPS: Int = 30;
+    const val SENSITIVITY_THRESHOLD_STEPS: Int = 50;
     const val SENSITIVITY_THRESHOLD_MIN: Float = 100f;
-    const val SENSITIVITY_THRESHOLD_MAX: Float = 5000f;
+    const val SENSITIVITY_THRESHOLD_MAX: Float = 10000f;
     const val COLOR_OFF: Int = 0xFF444444.toInt() //Color.DarkGray.value
-    const val COLOR_INITIAL_ONBOARD: Int = 0xFFFF00FF.toInt() //Color.Magenta.value
+    const val COLOR_INITIAL_ONBOARD: Int = 0xFF4E0DFF.toInt() // dark magenta, as in screenshots
 
     const val SETS_LIST_LENGTH = 8
 

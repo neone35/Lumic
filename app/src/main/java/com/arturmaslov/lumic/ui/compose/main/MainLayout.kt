@@ -250,7 +250,7 @@ fun BottomControls(
     onFlashModeSelected: (FlashMode) -> Unit = {},
     currentFlashMode: FlashMode = FlashMode.BOTH,
     onStrobeModeChange: () -> Unit = {},
-    hasFlash: Boolean = true
+    hasFlash: Boolean
 ) {
     Box(
         modifier
@@ -268,14 +268,16 @@ fun BottomControls(
         } else {
             ImageVector.vectorResource(R.drawable.ic_strobe_off)
         }
-        ControlButton(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            bgTint = iconColor,
-            onControlButtonClick = onStrobeModeChange,
-            iconVector = strobeIcon,
-            contentDescription = stringResource(R.string.strobe_mode),
-            size = 50.dp
-        )
+        if (hasFlash) {
+            ControlButton(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                bgTint = iconColor,
+                onControlButtonClick = onStrobeModeChange,
+                iconVector = strobeIcon,
+                contentDescription = stringResource(R.string.strobe_mode),
+                size = 50.dp
+            )
+        }
     }
 }
 

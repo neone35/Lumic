@@ -2,6 +2,7 @@ package com.arturmaslov.lumic.cache
 
 import android.content.SharedPreferences
 import com.arturmaslov.lumic.utils.Cache
+import com.arturmaslov.lumic.utils.Constants.COLOR_INITIAL_ONBOARD
 import com.arturmaslov.lumic.utils.Constants.COLOR_OFF
 import kotlinx.coroutines.CoroutineDispatcher
 
@@ -15,7 +16,7 @@ class ColorSettingCacheImpl(
 
     override suspend fun getFromStorage(): Int {
         val intSetting = sharedPreferences
-            .getInt(COLOR_SETTINGS_KEY, COLOR_OFF)
+            .getInt(COLOR_SETTINGS_KEY, COLOR_INITIAL_ONBOARD)
         return intSetting
     }
 
