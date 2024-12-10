@@ -40,6 +40,7 @@ import com.arturmaslov.lumic.utils.Constants.FLASH_ON_DURATION_INITIAL
 import com.arturmaslov.lumic.utils.Constants.SENSITIVITY_THRESHOLD_INITIAL
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
+import com.arturmaslov.lumic.utils.SetEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -124,7 +125,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                 sensitivityThreshold =
                     activeSensitivity ?: sensitivitySettingsCache.get() ?: SENSITIVITY_THRESHOLD_INITIAL
             }
-            var flashMode = baseFlashMode.collectAsState().value
+            val flashMode = flashMode().collectAsState().value
             LaunchedEffect(activeFlashMode) {
                 baseFlashMode.value = activeFlashMode ?: flashSettingsCache.get() ?: FlashMode.BOTH
             }
@@ -173,6 +174,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 colorSettingsCache.set(color)
                                                 colorSetting = color
+                                                firebaseUtils.recordColorChange(color)
                                             }
                                         },
                                         currentColorSetting = colorSetting,
@@ -180,6 +182,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 sensitivitySettingsCache.set(value)
                                                 sensitivityThreshold = value
+                                                firebaseUtils.recordSensitivityChange(value)
                                             }
                                         },
                                         currentSensitivityThreshold = sensitivityThreshold,
@@ -187,6 +190,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 flashSettingsCache.set(value)
                                                 baseFlashMode.value = value
+                                                firebaseUtils.recordFlashModeChange(value)
                                             }
                                         },
                                         currentFlashMode = flashMode,
@@ -195,9 +199,11 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                                 if (flashMode != FlashMode.STROBE) {
                                                     flashSettingsCache.set(FlashMode.STROBE)
                                                     baseFlashMode.value = FlashMode.STROBE
+                                                    firebaseUtils.recordFlashModeChange(FlashMode.STROBE)
                                                 } else {
                                                     flashSettingsCache.set(FlashMode.BOTH)
                                                     baseFlashMode.value = FlashMode.BOTH
+                                                    firebaseUtils.recordFlashModeChange(FlashMode.BOTH)
                                                 }
                                             }
                                         },
@@ -205,6 +211,7 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                             CoroutineScope(Dispatchers.IO).launch {
                                                 flashDurationSettingsCache.set(value)
                                                 flashDuration = value
+                                                firebaseUtils.recordFlashDurationChange(value)
                                             }
                                         },
                                         currentFlashDuration = flashDuration,
@@ -220,6 +227,8 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                                     sensitivity = sensitivityThreshold
                                                 )
                                                 mainRepository.insertUserSetting(userSettingToInsert)
+                                                firebaseUtils.recordUserSetEvent(
+                                                    userSettingToInsert, SetEvent.SET_SAVED)
                                             }
                                         },
                                         onSetActivated = { userSettingId ->
@@ -231,11 +240,19 @@ class MainActivity : BaseActivity(), ActivityHelper {
                                                 ))
                                                 currentActiveSettingSet = userSettingToActivate ?: UserSetting()
                                                 currentActiveSettingId = userSettingToActivate?.id ?: 0
-
+                                                firebaseUtils.recordUserSetEvent(
+                                                    userSettingToActivate ?: UserSetting(),
+                                                    SetEvent.SET_ACTIVATED
+                                                )
                                             }
                                         },
                                         allUserSettings = allUserSettingSets,
-                                        activeSetId = currentActiveSettingId
+                                        activeSetId = currentActiveSettingId,
+                                        onLocked = { hasBeenLocked ->
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                firebaseUtils.recordLock(hasBeenLocked)
+                                            }
+                                        }
                                     )
                                 }
                                 composable(PERMISSION_SCREEN) {

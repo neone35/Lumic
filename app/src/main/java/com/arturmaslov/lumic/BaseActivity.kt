@@ -12,6 +12,7 @@ import com.arturmaslov.lumic.cache.SensitivitySettingCache
 import com.arturmaslov.lumic.data.MainRepository
 import com.arturmaslov.lumic.data.UserSetting
 import com.arturmaslov.lumic.utils.ActivityHelper
+import com.arturmaslov.lumic.utils.FirebaseUtils
 import com.arturmaslov.lumic.utils.FlashMode
 import com.arturmaslov.lumic.utils.LoadStatus
 import com.arturmaslov.lumic.utils.PermissionStatus
@@ -25,6 +26,7 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
     val baseCameraPermissionStatus = MutableStateFlow(PermissionStatus.DENIED)
     val baseAudioRecordPermissionStatus = MutableStateFlow(PermissionStatus.DENIED)
     val baseLoadStatus = MutableStateFlow(LoadStatus.LOADING)
+    val baseFlashMode = MutableStateFlow(FlashMode.BOTH)
     val baseRequestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
 //            val permissionKeys = permissions.keys.map { it }
@@ -50,7 +52,6 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
                 }
             }
         }
-    val baseFlashMode = MutableStateFlow(FlashMode.BOTH)
 
     val sensitivitySettingsCache by inject<SensitivitySettingCache>()
     val colorSettingsCache by inject<ColorSettingCache>()
@@ -58,8 +59,9 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
     val flashDurationSettingsCache by inject<FlashDurationSettingCache>()
     val activeUserSettingsCache by inject<ActiveUserSettingsCache>()
     val onBoardCache by inject<OnBoardCache>()
-
     val mainRepository by inject<MainRepository>()
+
+    val firebaseUtils by inject<FirebaseUtils>()
 
     override fun setListeners() {}
     override fun setObservers() {}
@@ -69,6 +71,7 @@ open class BaseActivity: ComponentActivity(), ActivityHelper {
     fun audioRecordPermissionStatus() =
         baseAudioRecordPermissionStatus as StateFlow<PermissionStatus>
     fun loadStatus() = baseLoadStatus as StateFlow<LoadStatus>
+    fun flashMode() = baseFlashMode as StateFlow<FlashMode>
 
     companion object {}
 }

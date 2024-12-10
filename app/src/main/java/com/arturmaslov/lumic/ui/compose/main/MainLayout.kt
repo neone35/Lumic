@@ -67,7 +67,8 @@ fun PreviewMainScreen() {
             onSetSaved = { },
             onSetActivated = { },
             allUserSettings = emptyList(),
-            activeSetId = 0
+            activeSetId = 0,
+            onLocked = { }
         )
     }
 }
@@ -94,7 +95,8 @@ fun MainScreen(
     onSetSaved: (Int) -> Unit,
     onSetActivated: (Int) -> Unit,
     allUserSettings: List<UserSetting>,
-    activeSetId: Int
+    activeSetId: Int,
+    onLocked: (Boolean) -> Unit
 ) {
     val bgColor = remember { mutableIntStateOf(currentColorSetting) }
     var locked by remember { mutableStateOf(false) } // State to lock (no touch / fullscreen)
@@ -173,7 +175,10 @@ fun MainScreen(
                     modifier = Modifier
                         .padding(top = 16.dp),
                     bgTint = bgColor.intValue,
-                    onControlButtonClick = { locked = !locked },
+                    onControlButtonClick = {
+                        locked = !locked
+                        onLocked(locked)
+                    },
                     iconVector = lockIcon,
                     contentDescription = stringResource(R.string.lock_or_unlock),
                     size = 50.dp

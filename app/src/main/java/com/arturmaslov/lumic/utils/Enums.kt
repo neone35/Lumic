@@ -23,3 +23,8 @@ enum class PermissionStatus(val bool: Boolean) {
     GRANTED (true),
     DENIED (false)
 }
+
+enum class SetEvent(val string: String) {
+    SET_SAVED("set_saved"),
+    SET_ACTIVATED("set_activated")
+}
