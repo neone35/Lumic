@@ -13,7 +13,10 @@ import androidx.core.view.WindowInsetsControllerCompat
 fun ToggleFullScreen(window: Window, enabled: Boolean) {
     LaunchedEffect(enabled) {
         if (enabled) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
+            // Disable decor fitting to system windows
+            window.decorView.setOnApplyWindowInsetsListener { _, insets ->
+                insets
+            }
             val controller = WindowInsetsControllerCompat(window, window.decorView)
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior =
@@ -26,7 +29,8 @@ fun ToggleFullScreen(window: Window, enabled: Boolean) {
                 }
             }
         } else {
-            WindowCompat.setDecorFitsSystemWindows(window, true)
+            // Restore decor fitting to system windows
+            window.decorView.setOnApplyWindowInsetsListener(null)
             val controller = WindowInsetsControllerCompat(window, window.decorView)
             controller.show(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
@@ -38,5 +42,8 @@ fun ToggleFullScreen(window: Window, enabled: Boolean) {
                 }
             }
         }
+        // Request a layout pass
+        window.decorView.requestApplyInsets()
     }
 }
+
