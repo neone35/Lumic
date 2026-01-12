@@ -1,13 +1,11 @@
 package com.arturmaslov.lumic
 
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -53,13 +51,13 @@ class MainLayoutTest {
         colorPickerButton.assertIsDisplayed()
         settingsButton.assertIsDisplayed()
         playStopButton.assertIsDisplayed()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         colorPickerButton.performClick()
         colorPickerButton.assertIsDisplayed()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         settingsButton.performClick()
         settingsButton.assertIsDisplayed()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         playStopButton.performClick()
         playStopButton.assertIsDisplayed()
     }
@@ -83,12 +81,12 @@ class MainLayoutTest {
         val onlyScreenSmallFAB = composeTestRule.onNodeWithText(context.getString(R.string.screen))
 
         mainBigFAB.performClick()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         onlyFlashSmallFAB.assertIsDisplayed()
         onlyScreenSmallFAB.assertIsDisplayed()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         mainBigFAB.performClick()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         onlyFlashSmallFAB.assertIsNotDisplayed()
         onlyScreenSmallFAB.assertIsNotDisplayed()
     }
@@ -112,9 +110,9 @@ class MainLayoutTest {
         val strobeButton = composeTestRule.onNodeWithContentDescription(context.getString(R.string.strobe_mode))
         strobeButton.assertIsDisplayed()
         strobeButton.performClick()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         strobeButton.assertIsDisplayed()
-        Thread.sleep(500)
+        composeTestRule.waitForIdle()
         strobeButton.assertIsDisplayed()
     }
 }

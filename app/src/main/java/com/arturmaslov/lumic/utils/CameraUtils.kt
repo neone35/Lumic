@@ -49,8 +49,8 @@ class CameraUtils(
             val highAmplitude = dataSnapshot.any { it > currentSensitivityThreshold }
             val hasFlash = hasFlash.value
             val bothOrFlashMode = when (currentFlashMode) {
-                FlashMode.BOTH  -> true && hasFlash
-                FlashMode.FLASH -> true && hasFlash
+                FlashMode.BOTH -> hasFlash
+                FlashMode.FLASH -> hasFlash
                 else -> false
             }
             val strobeFlashMode = currentFlashMode == FlashMode.STROBE && hasFlash
