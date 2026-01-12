@@ -6,10 +6,11 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.ksp)
-    // firebase
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics.plugin)
-    alias(libs.plugins.firebase.perf.plugin)
+}
+if (System.getenv("CI") == null) {
+    apply(plugin = "com.google.firebase.crashlytics")
+    apply(plugin = "com.google.firebase.firebase-perf")
+    apply(plugin = "com.google.gms.google-services")
 }
 
 android {
