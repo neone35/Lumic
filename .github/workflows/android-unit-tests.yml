@@ -36,4 +36,4 @@ jobs:
 
       # 4️⃣ Run tests
       - name: Run unit tests with logging
-        run: ./gradlew testDebugUnitTest --info
+        run: bash ./gradlew testDebugUnitTest --info
